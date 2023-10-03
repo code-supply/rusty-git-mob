@@ -15,7 +15,7 @@
       packages.x86_64-linux.default = pkgs.rustPlatform.buildRustPackage {
         name = "git-mob";
         src = ./.;
-        cargoSha256 = "sha256-V6KZj6gPeUarnuy+1Wes/9H39l8vjfZUHIzGqfYV0aA=";
+        cargoHash = "sha256-5Lckrq0+IMszE39HQoCXoUTh3uzB+m4JyOCtuPc1UvY=";
       };
     };
 }
