@@ -4,10 +4,11 @@
     in {
       formatter.x86_64-linux = pkgs.nixpkgs-fmt;
       devShells.x86_64-linux.default = pkgs.mkShell {
-        packages = [
-          pkgs.cargo
-          pkgs.rustc
-          pkgs.nixpkgs-fmt
+        packages = with pkgs; [
+          cargo
+          nixpkgs-fmt
+          rust-analyzer
+          rustc
         ];
       };
 
