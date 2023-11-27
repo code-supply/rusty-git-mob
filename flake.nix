@@ -9,6 +9,7 @@
           nixpkgs-fmt
           rust-analyzer
           rustc
+          rustfmt
         ];
       };
 
