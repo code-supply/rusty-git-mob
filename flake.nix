@@ -6,6 +6,7 @@
       devShells.x86_64-linux.default = pkgs.mkShell {
         packages = with pkgs; [
           cargo
+          cargo-watch
           clippy
           nixpkgs-fmt
           rust-analyzer

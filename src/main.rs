@@ -1,28 +1,32 @@
+use std::fs::File;
+use std::io::BufReader;
+
 use clap::Parser;
 
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    #[arg(short, long)]
-    name: String,
+mod git_mob;
 
-    #[arg(short, long, default_value_t = 1)]
-    count: u8,
+#[derive(Parser, Debug)]
+struct Args {
+    #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+    initials: Vec<String>,
 }
 
 fn main() {
     let args = Args::parse();
 
-    for _ in 0..args.count {
-        println!("Hello, {}!", args.name);
-    }
-}
+    let mob_file = File::open("/home/andrew/.git-mob").expect("couldn't read mob list!");
+    let mob_reader = BufReader::new(mob_file);
+    let mob: Vec<String> = serde_json::from_reader(mob_reader).expect("couldn't parse mob list!");
 
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2+2;
-        assert_eq!(result, 4);
-    }
+    let coauthors_file =
+        File::open("/home/andrew/.git-coauthors").expect("couldn't read coauthors!");
+    let coauthors_reader = BufReader::new(coauthors_file);
+    let coauthors: git_mob::Coauthors =
+        serde_json::from_reader(coauthors_reader).expect("couldn't parse coauthors!");
+
+    println!("starting mob: {:?}", mob);
+
+    let effect = git_mob::process(&coauthors, mob, args.initials);
+
+    println!("effect would be: {:?}", effect);
 }
