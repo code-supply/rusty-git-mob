@@ -21,12 +21,12 @@ fn main() {
     let coauthors_file =
         File::open("/home/andrew/.git-coauthors").expect("couldn't read coauthors!");
     let coauthors_reader = BufReader::new(coauthors_file);
-    let coauthors: git_mob::Coauthors =
+    let coauthors_config: git_mob::CoauthorsConfig =
         serde_json::from_reader(coauthors_reader).expect("couldn't parse coauthors!");
 
     println!("starting mob: {:?}", mob);
 
-    let effect = git_mob::process(&coauthors, mob, args.initials);
+    let effect = git_mob::process(&coauthors_config.coauthors, mob, &args.initials);
 
     println!("effect would be: {:?}", effect);
 }

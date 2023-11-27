@@ -19,11 +19,11 @@ impl Default for Output {
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq)]
-pub struct Coauthors {
-    coauthors: HashMap<String, Coauthor>,
+pub struct CoauthorsConfig {
+    pub coauthors: Coauthors,
 }
 
-impl Default for Coauthors {
+impl Default for CoauthorsConfig {
     fn default() -> Self {
         Self {
             coauthors: HashMap::from([]),
@@ -31,26 +31,35 @@ impl Default for Coauthors {
     }
 }
 
+pub type Coauthors = HashMap<String, Coauthor>;
+
 #[derive(Clone, Deserialize, Debug, PartialEq)]
-struct Coauthor {
+pub struct Coauthor {
     name: String,
     email: String,
 }
 
-pub(crate) fn process(coauthors: &Coauthors, _mob: Vec<String>, initials: Vec<String>) -> Output {
-    if !initials.is_empty() {
-        let first_initial = initials.first().expect("BAD STUFF");
-        let coauthor = coauthors.coauthors.get(first_initial).expect("BAD STUFF");
-        let formatted = format!("Co-authored-by: {} <{}>", coauthor.name, coauthor.email);
+pub(crate) fn process(coauthors: &Coauthors, _mob: Vec<String>, initials: &[String]) -> Output {
+    let trailers = trailers(coauthors, initials);
 
-        Output {
-            message: formatted.to_string(),
-            template: formatted,
-            mob: initials.clone(),
-        }
-    } else {
-        Output::default()
+    Output {
+        message: trailers.to_string(),
+        template: trailers,
+        mob: initials.to_vec(),
     }
+}
+
+fn trailers(coauthors: &Coauthors, initials: &[String]) -> String {
+    initials.iter().fold(String::new(), |acc, initial| {
+        if let Some(coauthor) = coauthors.get(initial) {
+            format!(
+                "{}Co-authored-by: {} <{}>\n",
+                acc, coauthor.name, coauthor.email
+            )
+        } else {
+            acc
+        }
+    })
 }
 
 #[cfg(test)]
@@ -60,29 +69,60 @@ mod tests {
     #[test]
     fn test_empty_input_returns_empty_output() {
         assert_eq!(
-            process(&Coauthors::default(), vec![], vec![]),
+            process(&Coauthors::default(), vec![], &[]),
             Output::default()
         );
     }
 
     #[test]
     fn test_add_mobster_to_empty_mob() {
-        let coauthors = Coauthors {
-            coauthors: HashMap::from([(
+        let coauthors = Coauthors::from([(
+            "ab".to_string(),
+            Coauthor {
+                name: "Andrew Bruce".to_string(),
+                email: "me@andrewbruce.net".to_string(),
+            },
+        )]);
+
+        assert_eq!(
+            process(&coauthors, vec![], &["ab".to_string()]),
+            Output {
+                message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
+                template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
+                mob: vec!["ab".to_string()],
+            }
+        );
+    }
+
+    #[test]
+    fn test_add_many_mobsters_to_empty_mob() {
+        let coauthors = Coauthors::from([
+            (
                 "ab".to_string(),
                 Coauthor {
                     name: "Andrew Bruce".to_string(),
                     email: "me@andrewbruce.net".to_string(),
                 },
-            )]),
-        };
+            ),
+            (
+                "fb".to_string(),
+                Coauthor {
+                    name: "Fred Brookes".to_string(),
+                    email: "fred@example.com".to_string(),
+                },
+            ),
+        ]);
 
         assert_eq!(
-            process(&coauthors, vec![], vec!["ab".to_string()]),
+            process(&coauthors, vec![], &["ab".to_string(), "fb".to_string()]),
             Output {
-                message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>".to_owned(),
-                template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>".to_owned(),
-                mob: vec!["ab".to_string()],
+                message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+Co-authored-by: Fred Brookes <fred@example.com>\n"
+                    .to_owned(),
+                template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+Co-authored-by: Fred Brookes <fred@example.com>\n"
+                    .to_owned(),
+                mob: vec!["ab".to_string(), "fb".to_string()],
             }
         );
     }
