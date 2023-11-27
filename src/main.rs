@@ -20,19 +20,17 @@ struct Args {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
-    let git_mob_list_path = resolve_path("GIT_MOB_LIST", ".git-mob")?;
-    let git_coauthors_path = resolve_path("GIT_MOB_COAUTHORS", ".git-coauthors")?;
+    let coauthors_path = resolve_path("GIT_MOB_COAUTHORS", ".git-coauthors")?;
+    let mob_path = resolve_path("GIT_MOB_LIST", ".git-mob")?;
     let template_path = resolve_path("GIT_MOB_TEMPLATE", ".gitmessage.txt")?;
 
-    let mob_file = open_read_write(git_mob_list_path)?;
+    let coauthors_file = File::open(coauthors_path)?;
+    let mob_file = open_read_write(mob_path)?;
     let template_file = open_read_write(template_path)?;
 
-    let mob_reader = BufReader::new(&mob_file);
-    let mob: Vec<String> = serde_json::from_reader(mob_reader)?;
-
-    let coauthors_file = File::open(git_coauthors_path)?;
-    let coauthors_reader = BufReader::new(coauthors_file);
-    let coauthors_config: CoauthorsConfig = serde_json::from_reader(coauthors_reader)?;
+    let coauthors_config: CoauthorsConfig =
+        serde_json::from_reader(BufReader::new(coauthors_file))?;
+    let mob: Vec<String> = serde_json::from_reader(BufReader::new(&mob_file))?;
 
     let output = git_mob::process(&coauthors_config.coauthors, mob, &args.initials);
 
