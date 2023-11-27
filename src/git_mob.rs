@@ -3,9 +3,9 @@ use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
 pub struct Output {
-    message: String,
-    template: String,
-    mob: Vec<String>,
+    pub message: String,
+    pub template: String,
+    pub mob: Vec<String>,
 }
 
 impl Default for Output {
