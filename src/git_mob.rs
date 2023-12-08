@@ -2,22 +2,13 @@ use clap::Parser;
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(Parser, Debug)]
+#[derive(Parser, Debug, Default)]
 pub struct Args {
     #[arg(short, long)]
     solo: bool,
 
     #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
     initials: Vec<String>,
-}
-
-impl Default for Args {
-    fn default() -> Self {
-        Self {
-            solo: true,
-            initials: vec![],
-        }
-    }
 }
 
 pub fn parse_args() -> Args {
@@ -65,7 +56,9 @@ pub struct Coauthor {
 pub(crate) fn process(coauthors: &Coauthors, mob: &[String], args: &Args) -> Output {
     let initials = &args.initials;
 
-    if initials.is_empty() {
+    if args.solo {
+        output("", &[])
+    } else if initials.is_empty() {
         output(&trailers(coauthors, mob), mob)
     } else {
         output(&trailers(coauthors, initials), initials)
@@ -215,6 +208,42 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                     .to_string(),
                 mob: vec!["ab".to_string(), "fb".to_string()],
+            }
+        )
+    }
+
+    #[test]
+    fn soloing_shows_no_output_and_wipes_mob_and_template() {
+        let coauthors = Coauthors::from([
+            (
+                "ab".to_string(),
+                Coauthor {
+                    name: "Andrew Bruce".to_string(),
+                    email: "me@andrewbruce.net".to_string(),
+                },
+            ),
+            (
+                "fb".to_string(),
+                Coauthor {
+                    name: "Fred Brookes".to_string(),
+                    email: "fred@example.com".to_string(),
+                },
+            ),
+        ]);
+
+        assert_eq!(
+            process(
+                &coauthors,
+                &["ab".to_string(), "fb".to_string()],
+                &Args {
+                    initials: vec!["ab".to_string()],
+                    solo: true
+                },
+            ),
+            Output {
+                message: "".to_string(),
+                template: "".to_string(),
+                mob: vec![],
             }
         )
     }
