@@ -39,13 +39,19 @@ pub struct Coauthor {
     email: String,
 }
 
-pub(crate) fn process(coauthors: &Coauthors, _mob: Vec<String>, initials: &[String]) -> Output {
-    let trailers = trailers(coauthors, initials);
+pub(crate) fn process(coauthors: &Coauthors, mob: &[String], initials: &[String]) -> Output {
+    if initials.is_empty() {
+        output(&trailers(coauthors, mob), mob)
+    } else {
+        output(&trailers(coauthors, initials), initials)
+    }
+}
 
+fn output(formatted_trailers: &str, mob: &[String]) -> Output {
     Output {
-        message: trailers.to_string(),
-        template: trailers,
-        mob: initials.to_vec(),
+        message: formatted_trailers.to_string(),
+        template: formatted_trailers.to_string(),
+        mob: mob.to_vec(),
     }
 }
 
@@ -68,10 +74,7 @@ mod tests {
 
     #[test]
     fn empty_input_returns_empty_output() {
-        assert_eq!(
-            process(&Coauthors::default(), vec![], &[]),
-            Output::default()
-        );
+        assert_eq!(process(&Coauthors::default(), &[], &[]), Output::default());
     }
 
     #[test]
@@ -85,7 +88,7 @@ mod tests {
         )]);
 
         assert_eq!(
-            process(&coauthors, vec![], &["ab".to_string()]),
+            process(&coauthors, &[], &["ab".to_string()]),
             Output {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
                 template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
@@ -114,16 +117,49 @@ mod tests {
         ]);
 
         assert_eq!(
-            process(&coauthors, vec![], &["ab".to_string(), "fb".to_string()]),
+            process(&coauthors, &[], &["ab".to_string(), "fb".to_string()]),
             Output {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
-                    .to_owned(),
+                    .to_string(),
                 template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
-                    .to_owned(),
+                    .to_string(),
                 mob: vec!["ab".to_string(), "fb".to_string()],
             }
         );
+    }
+
+    #[test]
+    fn calling_without_initials_outputs_current_mob() {
+        let coauthors = Coauthors::from([
+            (
+                "ab".to_string(),
+                Coauthor {
+                    name: "Andrew Bruce".to_string(),
+                    email: "me@andrewbruce.net".to_string(),
+                },
+            ),
+            (
+                "fb".to_string(),
+                Coauthor {
+                    name: "Fred Brookes".to_string(),
+                    email: "fred@example.com".to_string(),
+                },
+            ),
+        ]);
+
+        assert_eq!(
+            process(&coauthors, &["ab".to_string(), "fb".to_string()], &[]),
+            Output {
+                message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+Co-authored-by: Fred Brookes <fred@example.com>\n"
+                    .to_string(),
+                template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+Co-authored-by: Fred Brookes <fred@example.com>\n"
+                    .to_string(),
+                mob: vec!["ab".to_string(), "fb".to_string()],
+            }
+        )
     }
 }

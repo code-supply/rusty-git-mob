@@ -32,7 +32,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         serde_json::from_reader(BufReader::new(coauthors_file))?;
     let mob: Vec<String> = serde_json::from_reader(BufReader::new(&mob_file))?;
 
-    let output = git_mob::process(&coauthors_config.coauthors, mob, &args.initials);
+    let output = git_mob::process(&coauthors_config.coauthors, &mob, &args.initials);
 
     write(template_file, &output.template)?;
 
