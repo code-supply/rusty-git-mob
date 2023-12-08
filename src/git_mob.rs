@@ -84,7 +84,7 @@ mod tests {
     fn empty_input_returns_empty_output() {
         assert_eq!(
             process(
-                &Coauthors::default(),
+                &coauthors(&[]),
                 &[],
                 &Args {
                     initials: vec![],
@@ -97,17 +97,9 @@ mod tests {
 
     #[test]
     fn forming_a_mob_outputs_the_mob() {
-        let coauthors = Coauthors::from([(
-            "ab".to_string(),
-            Coauthor {
-                name: "Andrew Bruce".to_string(),
-                email: "me@andrewbruce.net".to_string(),
-            },
-        )]);
-
         assert_eq!(
             process(
-                &coauthors,
+                &coauthors(&["ab".to_string()]),
                 &[],
                 &Args {
                     initials: vec!["ab".to_string()],
@@ -124,26 +116,9 @@ mod tests {
 
     #[test]
     fn can_add_many_mobsters() {
-        let coauthors = Coauthors::from([
-            (
-                "ab".to_string(),
-                Coauthor {
-                    name: "Andrew Bruce".to_string(),
-                    email: "me@andrewbruce.net".to_string(),
-                },
-            ),
-            (
-                "fb".to_string(),
-                Coauthor {
-                    name: "Fred Brookes".to_string(),
-                    email: "fred@example.com".to_string(),
-                },
-            ),
-        ]);
-
         assert_eq!(
             process(
-                &coauthors,
+                &coauthors(&["ab".to_string(), "fb".to_string()]),
                 &[],
                 &Args {
                     initials: vec!["ab".to_string(), "fb".to_string()],
@@ -164,26 +139,9 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
 
     #[test]
     fn calling_without_initials_outputs_current_mob() {
-        let coauthors = Coauthors::from([
-            (
-                "ab".to_string(),
-                Coauthor {
-                    name: "Andrew Bruce".to_string(),
-                    email: "me@andrewbruce.net".to_string(),
-                },
-            ),
-            (
-                "fb".to_string(),
-                Coauthor {
-                    name: "Fred Brookes".to_string(),
-                    email: "fred@example.com".to_string(),
-                },
-            ),
-        ]);
-
         assert_eq!(
             process(
-                &coauthors,
+                &coauthors(&["ab".to_string(), "fb".to_string()]),
                 &["ab".to_string(), "fb".to_string()],
                 &Args {
                     initials: vec![],
@@ -204,7 +162,25 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
 
     #[test]
     fn soloing_shows_no_output_and_wipes_mob_and_template() {
-        let coauthors = Coauthors::from([
+        assert_eq!(
+            process(
+                &coauthors(&["ab".to_string(), "fb".to_string()]),
+                &["ab".to_string(), "fb".to_string()],
+                &Args {
+                    initials: vec!["ab".to_string()],
+                    solo: true
+                },
+            ),
+            Output {
+                message: "".to_string(),
+                template: "".to_string(),
+                mob: vec![],
+            }
+        )
+    }
+
+    fn coauthors(initials: &[String]) -> Coauthors {
+        Coauthors::from([
             (
                 "ab".to_string(),
                 Coauthor {
@@ -219,22 +195,9 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
                     email: "fred@example.com".to_string(),
                 },
             ),
-        ]);
-
-        assert_eq!(
-            process(
-                &coauthors,
-                &["ab".to_string(), "fb".to_string()],
-                &Args {
-                    initials: vec!["ab".to_string()],
-                    solo: true
-                },
-            ),
-            Output {
-                message: "".to_string(),
-                template: "".to_string(),
-                mob: vec![],
-            }
-        )
+        ])
+        .into_iter()
+        .filter(|(k, _v)| initials.contains(k))
+        .collect()
     }
 }
