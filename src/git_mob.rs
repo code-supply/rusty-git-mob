@@ -11,8 +11,8 @@ pub struct Output {
 impl Default for Output {
     fn default() -> Self {
         Self {
-            message: "".to_owned(),
-            template: "".to_owned(),
+            message: "".to_string(),
+            template: "".to_string(),
             mob: vec![],
         }
     }
@@ -67,7 +67,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_empty_input_returns_empty_output() {
+    fn empty_input_returns_empty_output() {
         assert_eq!(
             process(&Coauthors::default(), vec![], &[]),
             Output::default()
@@ -75,7 +75,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_mobster_to_empty_mob() {
+    fn forming_a_mob_outputs_the_mob() {
         let coauthors = Coauthors::from([(
             "ab".to_string(),
             Coauthor {
@@ -95,7 +95,7 @@ mod tests {
     }
 
     #[test]
-    fn test_add_many_mobsters_to_empty_mob() {
+    fn can_add_many_mobsters() {
         let coauthors = Coauthors::from([
             (
                 "ab".to_string(),
