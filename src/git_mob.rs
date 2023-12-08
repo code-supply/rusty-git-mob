@@ -1,5 +1,28 @@
+use clap::Parser;
 use serde::Deserialize;
 use std::collections::HashMap;
+
+#[derive(Parser, Debug)]
+pub struct Args {
+    #[arg(short, long)]
+    solo: bool,
+
+    #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+    initials: Vec<String>,
+}
+
+impl Default for Args {
+    fn default() -> Self {
+        Self {
+            solo: true,
+            initials: vec![],
+        }
+    }
+}
+
+pub fn parse_args() -> Args {
+    Args::parse()
+}
 
 #[derive(Debug, PartialEq)]
 pub struct Output {
@@ -39,7 +62,9 @@ pub struct Coauthor {
     email: String,
 }
 
-pub(crate) fn process(coauthors: &Coauthors, mob: &[String], initials: &[String]) -> Output {
+pub(crate) fn process(coauthors: &Coauthors, mob: &[String], args: &Args) -> Output {
+    let initials = &args.initials;
+
     if initials.is_empty() {
         output(&trailers(coauthors, mob), mob)
     } else {
@@ -74,7 +99,17 @@ mod tests {
 
     #[test]
     fn empty_input_returns_empty_output() {
-        assert_eq!(process(&Coauthors::default(), &[], &[]), Output::default());
+        assert_eq!(
+            process(
+                &Coauthors::default(),
+                &[],
+                &Args {
+                    initials: vec![],
+                    ..Default::default()
+                }
+            ),
+            Output::default()
+        );
     }
 
     #[test]
@@ -88,7 +123,14 @@ mod tests {
         )]);
 
         assert_eq!(
-            process(&coauthors, &[], &["ab".to_string()]),
+            process(
+                &coauthors,
+                &[],
+                &Args {
+                    initials: vec!["ab".to_string()],
+                    ..Default::default()
+                }
+            ),
             Output {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
                 template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
@@ -117,7 +159,14 @@ mod tests {
         ]);
 
         assert_eq!(
-            process(&coauthors, &[], &["ab".to_string(), "fb".to_string()]),
+            process(
+                &coauthors,
+                &[],
+                &Args {
+                    initials: vec!["ab".to_string(), "fb".to_string()],
+                    ..Default::default()
+                }
+            ),
             Output {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
@@ -150,7 +199,14 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
         ]);
 
         assert_eq!(
-            process(&coauthors, &["ab".to_string(), "fb".to_string()], &[]),
+            process(
+                &coauthors,
+                &["ab".to_string(), "fb".to_string()],
+                &Args {
+                    initials: vec![],
+                    ..Default::default()
+                },
+            ),
             Output {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"

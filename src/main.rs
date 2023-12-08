@@ -1,5 +1,4 @@
 use crate::git_mob::CoauthorsConfig;
-use clap::Parser;
 use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -11,14 +10,8 @@ use std::path::PathBuf;
 
 mod git_mob;
 
-#[derive(Parser, Debug)]
-struct Args {
-    #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
-    initials: Vec<String>,
-}
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args = Args::parse();
+    let args = git_mob::parse_args();
 
     let coauthors_path = resolve_path("GIT_MOB_COAUTHORS", ".git-coauthors")?;
     let mob_path = resolve_path("GIT_MOB_LIST", ".git-mob")?;
@@ -32,7 +25,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         serde_json::from_reader(BufReader::new(coauthors_file))?;
     let mob: Vec<String> = serde_json::from_reader(BufReader::new(&mob_file))?;
 
-    let output = git_mob::process(&coauthors_config.coauthors, &mob, &args.initials);
+    let output = git_mob::process(&coauthors_config.coauthors, &mob, &args);
 
     write(template_file, &output.template)?;
 
