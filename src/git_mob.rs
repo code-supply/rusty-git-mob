@@ -15,21 +15,11 @@ pub fn parse_args() -> Args {
     Args::parse()
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Default)]
 pub struct Output {
     pub message: String,
     pub template: String,
     pub mob: Vec<String>,
-}
-
-impl Default for Output {
-    fn default() -> Self {
-        Self {
-            message: "".to_string(),
-            template: "".to_string(),
-            mob: vec![],
-        }
-    }
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq)]
