@@ -8,6 +8,7 @@
           cargo
           cargo-watch
           clippy
+          ncurses
           nixpkgs-fmt
           rust-analyzer
           rustc
@@ -18,7 +19,8 @@
       packages.x86_64-linux.default = pkgs.rustPlatform.buildRustPackage {
         name = "git-mob";
         src = ./.;
-        cargoHash = "sha256-Lo79Jf4p3M8p+CiW8JQgzCoDBRDwX74zGoGWx8WzTc8=";
+        cargoHash = "sha256-SdHL1FBowRMgbl5S3gUJgDCPBRM9WWNFZ5hEV265XO0=";
+        buildInputs = [ pkgs.ncurses ];
       };
     };
 }
