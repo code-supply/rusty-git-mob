@@ -1,14 +1,17 @@
 use crate::git_mob::CoauthorsConfig;
+use std::collections::HashSet;
 use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io;
 use std::io::BufReader;
-use std::io::Seek;
-use std::io::Write;
 use std::path::PathBuf;
 
+use self::git_mob::Output;
+
 mod git_mob;
+mod pick_view;
+mod writer;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = git_mob::parse_args();
@@ -25,22 +28,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         serde_json::from_reader(BufReader::new(coauthors_file))?;
     let mob: Vec<String> = serde_json::from_reader(BufReader::new(&mob_file))?;
 
-    let output = git_mob::process(&coauthors_config.coauthors, &mob, &args);
+    let mob_set: HashSet<String> = HashSet::from_iter(mob.iter().cloned());
 
-    write(template_file, &output.template)?;
-
-    let mob_json = serde_json::to_string(&output.mob)? + "\n";
-    write(mob_file, &mob_json)?;
-
-    println!("{}", output.message);
-
-    Ok(())
-}
-
-fn write(mut file: File, contents: &str) -> io::Result<()> {
-    file.set_len(0)?;
-    file.rewind()?;
-    file.write_all(contents.as_bytes())
+    if args.pick {
+        pick_view::render(
+            coauthors_config.coauthors,
+            &mob_set,
+            move |output: Output| writer::write(&template_file, &mob_file, output),
+        );
+        Ok(())
+    } else {
+        let output = git_mob::process(&coauthors_config.coauthors, &mob_set, &args);
+        writer::write(&template_file, &mob_file, output)
+    }
 }
 
 fn open_read_write(path: PathBuf) -> io::Result<File> {
