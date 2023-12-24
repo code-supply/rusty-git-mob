@@ -1,4 +1,3 @@
-use crate::git_mob::output;
 use crate::git_mob::trailers;
 use crate::git_mob::Coauthors;
 use crate::git_mob::Output;
@@ -35,10 +34,14 @@ where
 {
     Dialog::around(view)
         .title("Mob up with")
-        .button("Cancel", |s| s.quit())
         .button("OK", move |s| {
             s.with_user_data(|mob: &mut HashSet<String>| {
-                write(output(&trailers(&coauthors, mob), mob))
+                let ts = trailers(&coauthors, mob);
+                write(Output {
+                    message: ts.clone(),
+                    template: ts,
+                    mob: mob.clone(),
+                })
             });
             s.quit()
         })
