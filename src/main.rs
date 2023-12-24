@@ -1,4 +1,6 @@
 use crate::git_mob::CoauthorsConfig;
+use crate::git_mob::Output;
+
 use std::collections::HashSet;
 use std::env;
 use std::fs::File;
@@ -7,10 +9,8 @@ use std::io;
 use std::io::BufReader;
 use std::path::PathBuf;
 
-use self::git_mob::Output;
-
 mod git_mob;
-mod pick_view;
+mod picker;
 mod writer;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -31,7 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mob_set: HashSet<String> = HashSet::from_iter(mob.iter().cloned());
 
     if args.pick {
-        pick_view::render(
+        picker::run(
             coauthors_config.coauthors,
             &mob_set,
             move |output: Output| writer::write(&template_file, &mob_file, output),
@@ -47,12 +47,15 @@ fn open_read_write(path: PathBuf) -> io::Result<File> {
     OpenOptions::new().read(true).write(true).open(path)
 }
 
-fn resolve_path(env_var_name: &str, filename: &str) -> Result<PathBuf, &'static str> {
+fn resolve_path(env_var_name: &str, filename: &str) -> Result<PathBuf, String> {
     match env::var(env_var_name) {
         Ok(path) => Ok(PathBuf::from(path)),
         Err(_e) => match home::home_dir() {
             Some(path_buf) => Ok(path_buf.as_path().join(filename)),
-            None => Err("GIT_MOB_LIST not set and couldn't find your home dir!"),
+            None => Err(format!(
+                "{} not set and couldn't find your home dir!",
+                env_var_name
+            )),
         },
     }
 }

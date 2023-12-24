@@ -7,7 +7,7 @@ use cursive::views::{Checkbox, Dialog};
 use cursive::{event::Key, views::ListView};
 use std::collections::HashSet;
 
-pub(crate) fn render<F>(coauthors: Coauthors, mob: &HashSet<String>, write: F)
+pub(crate) fn run<F>(coauthors: Coauthors, mob: &HashSet<String>, write: F)
 where
     F: Fn(Output) -> Result<(), Box<dyn std::error::Error>> + 'static,
 {
