@@ -47,10 +47,9 @@ where
 fn scroll_view(coauthors: &Coauthors, mob: &Mob) -> ScrollView<ListView> {
     ScrollView::new(
         coauthors
-            .clone()
-            .into_iter()
+            .iter()
             .fold(ListView::new(), |list_view, (initials, coauthor)| {
-                list_view.child(&coauthor.name, checkbox(mob, initials))
+                list_view.child(&coauthor.name, checkbox(mob, initials.to_string()))
             }),
     )
 }
