@@ -1,15 +1,16 @@
 use crate::git_mob::trailers;
 use crate::git_mob::Coauthors;
+use crate::git_mob::MainResult;
+use crate::git_mob::Mob;
 use crate::git_mob::Output;
 use cursive::views::OnEventView;
 use cursive::views::ScrollView;
 use cursive::views::{Checkbox, Dialog};
 use cursive::{event::Key, views::ListView};
-use std::collections::HashSet;
 
-pub(crate) fn run<F>(coauthors: Coauthors, mob: &HashSet<String>, write: F)
+pub(crate) fn run<F>(coauthors: Coauthors, mob: &Mob, write: F)
 where
-    F: Fn(Output) -> Result<(), Box<dyn std::error::Error>> + 'static,
+    F: Fn(Output) -> MainResult + 'static,
 {
     let mut siv = cursive::default();
 
@@ -30,12 +31,12 @@ fn dialog<F>(
     write: F,
 ) -> Dialog
 where
-    F: Fn(Output) -> Result<(), Box<dyn std::error::Error>> + 'static,
+    F: Fn(Output) -> MainResult + 'static,
 {
     Dialog::around(view)
         .title("Mob up with")
         .button("OK", move |s| {
-            s.with_user_data(|mob: &mut HashSet<String>| {
+            s.with_user_data(|mob: &mut Mob| {
                 let ts = trailers(&coauthors, mob);
                 write(Output {
                     message: ts.clone(),
@@ -49,7 +50,7 @@ where
 
 fn scroll_view(
     coauthors: &std::collections::HashMap<String, crate::git_mob::Coauthor>,
-    mob: &HashSet<String>,
+    mob: &Mob,
 ) -> ScrollView<ListView> {
     ScrollView::new(
         coauthors
@@ -61,11 +62,11 @@ fn scroll_view(
     )
 }
 
-fn checkbox(mob: &HashSet<String>, initials: String) -> Checkbox {
+fn checkbox(mob: &Mob, initials: String) -> Checkbox {
     Checkbox::new()
         .with_checked(mob.contains(&initials))
         .on_change(move |s, checked| {
-            s.with_user_data(|mob: &mut HashSet<String>| {
+            s.with_user_data(|mob: &mut Mob| {
                 if checked {
                     mob.insert(initials.clone());
                 } else {

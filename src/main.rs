@@ -1,7 +1,8 @@
 use crate::git_mob::CoauthorsConfig;
+use crate::git_mob::MainResult;
+use crate::git_mob::Mob;
 use crate::git_mob::Output;
 
-use std::collections::HashSet;
 use std::env;
 use std::fs::File;
 use std::fs::OpenOptions;
@@ -13,7 +14,7 @@ mod git_mob;
 mod picker;
 mod writer;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> MainResult {
     let args = git_mob::parse_args();
 
     let coauthors_path = resolve_path("GIT_MOB_COAUTHORS", ".git-coauthors")?;
@@ -28,7 +29,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         serde_json::from_reader(BufReader::new(coauthors_file))?;
     let mob: Vec<String> = serde_json::from_reader(BufReader::new(&mob_file))?;
 
-    let mob_set: HashSet<String> = HashSet::from_iter(mob.iter().cloned());
+    let mob_set: Mob = Mob::from_iter(mob.iter().cloned());
 
     if args.pick {
         picker::run(

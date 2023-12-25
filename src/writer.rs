@@ -1,3 +1,4 @@
+use crate::MainResult;
 use std::fs::File;
 use std::io;
 use std::io::Seek;
@@ -5,11 +6,7 @@ use std::io::Write;
 
 use crate::git_mob::Output;
 
-pub fn write(
-    template_file: &File,
-    mob_file: &File,
-    output: Output,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn write(template_file: &File, mob_file: &File, output: Output) -> MainResult {
     write_file(template_file, &output.template)?;
 
     let mob_json = serde_json::to_string(&output.mob)? + "\n";

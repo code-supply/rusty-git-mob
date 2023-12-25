@@ -2,6 +2,9 @@ use clap::Parser;
 use serde::Deserialize;
 use std::collections::{HashMap, HashSet};
 
+pub type MainResult = Result<(), Box<dyn std::error::Error>>;
+pub type Mob = HashSet<String>;
+
 #[derive(Parser, Debug, Default)]
 pub struct Args {
     #[arg(short, long)]
@@ -22,7 +25,7 @@ pub fn parse_args() -> Args {
 pub struct Output {
     pub message: String,
     pub template: String,
-    pub mob: HashSet<String>,
+    pub mob: Mob,
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -46,11 +49,11 @@ pub struct Coauthor {
     email: String,
 }
 
-pub fn process(coauthors: &Coauthors, mob: &HashSet<String>, args: &Args) -> Output {
-    let initials = HashSet::from_iter(args.initials.iter().cloned());
+pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
+    let initials = Mob::from_iter(args.initials.iter().cloned());
 
     if args.solo {
-        output("", &HashSet::new())
+        output("", &Mob::new())
     } else if initials.is_empty() {
         output(&trailers(coauthors, mob), mob)
     } else {
@@ -58,7 +61,7 @@ pub fn process(coauthors: &Coauthors, mob: &HashSet<String>, args: &Args) -> Out
     }
 }
 
-pub fn output(formatted_trailers: &str, mob: &HashSet<String>) -> Output {
+pub fn output(formatted_trailers: &str, mob: &Mob) -> Output {
     Output {
         message: formatted_trailers.to_string(),
         template: formatted_trailers.to_string(),
@@ -66,7 +69,7 @@ pub fn output(formatted_trailers: &str, mob: &HashSet<String>) -> Output {
     }
 }
 
-pub fn trailers(coauthors: &Coauthors, initials: &HashSet<String>) -> String {
+pub fn trailers(coauthors: &Coauthors, initials: &Mob) -> String {
     let mut sorted = Vec::from_iter(initials);
     sorted.sort();
     sorted.iter().fold(String::new(), |acc, initial| {
@@ -89,8 +92,8 @@ mod tests {
     fn empty_input_returns_empty_output() {
         assert_eq!(
             process(
-                &coauthors(&HashSet::new()),
-                &HashSet::new(),
+                &coauthors(&Mob::new()),
+                &Mob::new(),
                 &Args {
                     initials: vec![],
                     ..Default::default()
@@ -104,8 +107,8 @@ mod tests {
     fn forming_a_mob_outputs_the_mob() {
         assert_eq!(
             process(
-                &coauthors(&HashSet::from(["ab".to_string()])),
-                &HashSet::new(),
+                &coauthors(&Mob::from(["ab".to_string()])),
+                &Mob::new(),
                 &Args {
                     initials: vec!["ab".to_string()],
                     ..Default::default()
@@ -114,7 +117,7 @@ mod tests {
             Output {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
                 template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
-                mob: HashSet::from(["ab".to_string()]),
+                mob: Mob::from(["ab".to_string()]),
             }
         );
     }
@@ -123,8 +126,8 @@ mod tests {
     fn can_add_many_mobsters() {
         assert_eq!(
             process(
-                &coauthors(&HashSet::from(["ab".to_string(), "fb".to_string()])),
-                &HashSet::new(),
+                &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
+                &Mob::new(),
                 &Args {
                     initials: vec!["ab".to_string(), "fb".to_string()],
                     ..Default::default()
@@ -137,7 +140,7 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
                 template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                     .to_string(),
-                mob: HashSet::from(["ab".to_string(), "fb".to_string()]),
+                mob: Mob::from(["ab".to_string(), "fb".to_string()]),
             }
         );
     }
@@ -146,8 +149,8 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
     fn calling_without_initials_outputs_current_mob() {
         assert_eq!(
             process(
-                &coauthors(&HashSet::from(["ab".to_string(), "fb".to_string()])),
-                &HashSet::from(["ab".to_string(), "fb".to_string()]),
+                &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
+                &Mob::from(["ab".to_string(), "fb".to_string()]),
                 &Args {
                     initials: vec![],
                     ..Default::default()
@@ -160,7 +163,7 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
                 template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                     .to_string(),
-                mob: HashSet::from(["ab".to_string(), "fb".to_string()]),
+                mob: Mob::from(["ab".to_string(), "fb".to_string()]),
             }
         )
     }
@@ -169,8 +172,8 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
     fn soloing_shows_no_output_and_wipes_mob_and_template() {
         assert_eq!(
             process(
-                &coauthors(&HashSet::from(["ab".to_string(), "fb".to_string()])),
-                &HashSet::from(["ab".to_string(), "fb".to_string()]),
+                &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
+                &Mob::from(["ab".to_string(), "fb".to_string()]),
                 &Args {
                     initials: vec!["ab".to_string()],
                     solo: true,
@@ -180,12 +183,12 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
             Output {
                 message: "".to_string(),
                 template: "".to_string(),
-                mob: HashSet::new(),
+                mob: Mob::new(),
             }
         )
     }
 
-    fn coauthors(initials: &HashSet<String>) -> Coauthors {
+    fn coauthors(initials: &Mob) -> Coauthors {
         Coauthors::from([
             (
                 "ab".to_string(),
