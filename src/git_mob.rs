@@ -55,7 +55,11 @@ pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
 pub fn output(formatted_trailers: &str, mob: &Mob) -> Output {
     Output {
         message: formatted_trailers.to_string(),
-        template: formatted_trailers.to_string(),
+        template: if formatted_trailers.is_empty() {
+            "".to_string()
+        } else {
+            format!("\n\n{}", formatted_trailers)
+        },
         mob: mob.clone(),
     }
 }
@@ -94,7 +98,7 @@ mod tests {
     }
 
     #[test]
-    fn forming_a_mob_outputs_the_mob() {
+    fn forming_a_mob_outputs_the_mob_and_template() {
         assert_eq!(
             process(
                 &coauthors(&Mob::from(["ab".to_string()])),
@@ -106,7 +110,7 @@ mod tests {
             ),
             Output {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
-                template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
+                template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
                 mob: Mob::from(["ab".to_string()]),
             }
         );
@@ -127,7 +131,7 @@ mod tests {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                     .to_string(),
-                template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+                template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                     .to_string(),
                 mob: Mob::from(["ab".to_string(), "fb".to_string()]),
@@ -150,7 +154,7 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                     .to_string(),
-                template: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+                template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                     .to_string(),
                 mob: Mob::from(["ab".to_string(), "fb".to_string()]),
