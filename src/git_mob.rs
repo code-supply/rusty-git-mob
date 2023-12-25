@@ -1,9 +1,16 @@
 use clap::Parser;
 use serde::Deserialize;
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet};
 
 pub type MainResult = Result<(), Box<dyn std::error::Error>>;
-pub type Mob = HashSet<String>;
+pub type Mob = BTreeSet<String>;
+pub type Coauthors = BTreeMap<String, Coauthor>;
+
+#[derive(Clone, Deserialize, Debug, PartialEq)]
+pub struct Coauthor {
+    pub name: String,
+    email: String,
+}
 
 #[derive(Parser, Debug, Default)]
 pub struct Args {
@@ -39,14 +46,6 @@ impl Default for CoauthorsConfig {
             coauthors: Coauthors::from([]),
         }
     }
-}
-
-pub type Coauthors = HashMap<String, Coauthor>;
-
-#[derive(Clone, Deserialize, Debug, PartialEq)]
-pub struct Coauthor {
-    pub name: String,
-    email: String,
 }
 
 pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
@@ -186,6 +185,24 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
                 mob: Mob::new(),
             }
         )
+    }
+
+    #[test]
+    fn coauthors_are_sorted_by_initials() {
+        let a = coauthors(&Mob::from(["ab".to_string(), "fb".to_string()]));
+        let expected: Vec<_> = a.iter().collect();
+        let b = coauthors(&Mob::from(["fb".to_string(), "ab".to_string()]));
+        let actual: Vec<_> = b.iter().collect();
+        assert_eq!(actual, expected)
+    }
+
+    #[test]
+    fn mob_is_sorted() {
+        let a = Mob::from(["ab".to_string(), "fb".to_string()]);
+        let expected: Vec<_> = a.iter().collect();
+        let b = Mob::from(["fb".to_string(), "ab".to_string()]);
+        let actual: Vec<_> = b.iter().collect();
+        assert_eq!(actual, expected)
     }
 
     fn coauthors(initials: &Mob) -> Coauthors {
