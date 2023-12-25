@@ -6,12 +6,6 @@ pub type MainResult = Result<(), Box<dyn std::error::Error>>;
 pub type Mob = BTreeSet<String>;
 pub type Coauthors = BTreeMap<String, Coauthor>;
 
-#[derive(Clone, Deserialize, Debug, PartialEq)]
-pub struct Coauthor {
-    pub name: String,
-    email: String,
-}
-
 #[derive(Parser, Debug, Default)]
 pub struct Args {
     #[arg(short, long)]
@@ -24,8 +18,15 @@ pub struct Args {
     initials: Vec<String>,
 }
 
-pub fn parse_args() -> Args {
-    Args::parse()
+#[derive(Clone, Debug, Default, Deserialize, PartialEq)]
+pub struct CoauthorsConfig {
+    pub coauthors: Coauthors,
+}
+
+#[derive(Clone, Deserialize, Debug, PartialEq)]
+pub struct Coauthor {
+    pub name: String,
+    email: String,
 }
 
 #[derive(Debug, PartialEq, Default)]
@@ -35,9 +36,8 @@ pub struct Output {
     pub mob: Mob,
 }
 
-#[derive(Clone, Debug, Default, Deserialize, PartialEq)]
-pub struct CoauthorsConfig {
-    pub coauthors: Coauthors,
+pub fn parse_args() -> Args {
+    Args::parse()
 }
 
 pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
