@@ -35,17 +35,9 @@ pub struct Output {
     pub mob: Mob,
 }
 
-#[derive(Clone, Debug, Deserialize, PartialEq)]
+#[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 pub struct CoauthorsConfig {
     pub coauthors: Coauthors,
-}
-
-impl Default for CoauthorsConfig {
-    fn default() -> Self {
-        Self {
-            coauthors: Coauthors::from([]),
-        }
-    }
 }
 
 pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
@@ -69,18 +61,17 @@ pub fn output(formatted_trailers: &str, mob: &Mob) -> Output {
 }
 
 pub fn trailers(coauthors: &Coauthors, initials: &Mob) -> String {
-    let mut sorted = Vec::from_iter(initials);
-    sorted.sort();
-    sorted.iter().fold(String::new(), |acc, initial| {
-        if let Some(coauthor) = coauthors.get(initial.to_owned()) {
-            format!(
-                "{}Co-authored-by: {} <{}>\n",
-                acc, coauthor.name, coauthor.email
-            )
-        } else {
-            acc
-        }
-    })
+    initials
+        .iter()
+        .fold(String::new(), |acc, initial| match coauthors.get(initial) {
+            Some(coauthor) => {
+                format!(
+                    "{}Co-authored-by: {} <{}>\n",
+                    acc, coauthor.name, coauthor.email
+                )
+            }
+            None => acc,
+        })
 }
 
 #[cfg(test)]
