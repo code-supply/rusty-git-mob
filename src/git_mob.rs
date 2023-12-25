@@ -36,7 +36,7 @@ pub struct CoauthorsConfig {
 impl Default for CoauthorsConfig {
     fn default() -> Self {
         Self {
-            coauthors: HashMap::from([]),
+            coauthors: Coauthors::from([]),
         }
     }
 }

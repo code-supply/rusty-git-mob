@@ -25,11 +25,7 @@ where
     siv.run()
 }
 
-fn dialog<F>(
-    view: ScrollView<ListView>,
-    coauthors: std::collections::HashMap<String, crate::git_mob::Coauthor>,
-    write: F,
-) -> Dialog
+fn dialog<F>(view: ScrollView<ListView>, coauthors: Coauthors, write: F) -> Dialog
 where
     F: Fn(Output) -> MainResult + 'static,
 {
@@ -48,10 +44,7 @@ where
         })
 }
 
-fn scroll_view(
-    coauthors: &std::collections::HashMap<String, crate::git_mob::Coauthor>,
-    mob: &Mob,
-) -> ScrollView<ListView> {
+fn scroll_view(coauthors: &Coauthors, mob: &Mob) -> ScrollView<ListView> {
     ScrollView::new(
         coauthors
             .clone()
