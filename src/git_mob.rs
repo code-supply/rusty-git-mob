@@ -30,7 +30,7 @@ pub struct Coauthor {
 }
 
 #[derive(Debug, PartialEq, Default)]
-pub struct Output {
+pub struct GitMobOutput {
     pub message: String,
     pub template: String,
     pub mob: Mob,
@@ -40,7 +40,7 @@ pub fn parse_args() -> Args {
     Args::parse()
 }
 
-pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
+pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> GitMobOutput {
     let initials = Mob::from_iter(args.initials.iter().cloned());
 
     if args.solo {
@@ -52,8 +52,8 @@ pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
     }
 }
 
-pub fn output(formatted_trailers: &str, mob: &Mob) -> Output {
-    Output {
+pub fn output(formatted_trailers: &str, mob: &Mob) -> GitMobOutput {
+    GitMobOutput {
         message: formatted_trailers.to_string(),
         template: if formatted_trailers.is_empty() {
             "".to_string()
@@ -93,7 +93,7 @@ mod tests {
                     ..Default::default()
                 }
             ),
-            Output::default()
+            GitMobOutput::default()
         );
     }
 
@@ -108,7 +108,7 @@ mod tests {
                     ..Default::default()
                 }
             ),
-            Output {
+            GitMobOutput {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
                 template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
                 mob: Mob::from(["ab".to_string()]),
@@ -127,7 +127,7 @@ mod tests {
                     ..Default::default()
                 }
             ),
-            Output {
+            GitMobOutput {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                     .to_string(),
@@ -150,7 +150,7 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
                     ..Default::default()
                 },
             ),
-            Output {
+            GitMobOutput {
                 message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                     .to_string(),
@@ -174,7 +174,7 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
                     pick: false
                 },
             ),
-            Output {
+            GitMobOutput {
                 message: "".to_string(),
                 template: "".to_string(),
                 mob: Mob::new(),

@@ -1,7 +1,7 @@
 use crate::git_mob::CoauthorsConfig;
+use crate::git_mob::GitMobOutput;
 use crate::git_mob::MainResult;
 use crate::git_mob::Mob;
-use crate::git_mob::Output;
 
 use std::env;
 use std::fs::File;
@@ -35,7 +35,7 @@ fn main() -> MainResult {
         picker::run(
             coauthors_config.coauthors,
             &mob_set,
-            move |output: Output| writer::write(&template_file, &mob_file, output),
+            move |output: GitMobOutput| writer::write(&template_file, &mob_file, output),
         );
         Ok(())
     } else {
