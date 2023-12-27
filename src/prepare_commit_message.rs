@@ -2,9 +2,15 @@ use clap::Parser;
 
 use crate::core::*;
 
+pub type MainResult = Result<(), Box<dyn std::error::Error>>;
+
 #[derive(Parser, Debug, Default)]
 pub struct Args {
     pub message_path: String,
+}
+
+pub fn parse_args() -> Args {
+    Args::parse()
 }
 
 pub fn prepare_commit_message(
