@@ -1,7 +1,7 @@
 use super::*;
 
 #[test]
-fn prepare_commit_message_with_empty_coauthors_produces_empty_message() {
+fn empty_coauthors_produces_empty_message() {
     assert_eq!(
         prepare_commit_message(&Coauthors::default(), &Mob::default(), "".to_string()),
         PrepareCommitMessageOutput::default()
@@ -9,7 +9,7 @@ fn prepare_commit_message_with_empty_coauthors_produces_empty_message() {
 }
 
 #[test]
-fn prepare_commit_message_with_empty_coauthors_and_only_comments_has_no_leading_whitespace() {
+fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
     assert_eq!(
         prepare_commit_message(
             &Coauthors::default(),
@@ -23,7 +23,7 @@ fn prepare_commit_message_with_empty_coauthors_and_only_comments_has_no_leading_
 }
 
 #[test]
-fn prepare_commit_message_adds_coauthors_to_message_without_comments() {
+fn adds_coauthors_to_message_without_comments() {
     assert_eq!(
         prepare_commit_message(
             &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
