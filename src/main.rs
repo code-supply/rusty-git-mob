@@ -1,17 +1,9 @@
-use git_mob::open_read_write;
-use git_mob::parse_args;
-use git_mob::process;
-use git_mob::resolve_path;
-use git_mob::CoauthorsConfig;
-use git_mob::GitMobOutput;
-use git_mob::MainResult;
-use git_mob::Mob;
-
 use std::fs::File;
 use std::io::BufReader;
 
-mod picker;
-mod writer;
+use git_mob::core::*;
+use git_mob::git_mob_cmd::*;
+use git_mob::picker;
 
 fn main() -> MainResult {
     let args = parse_args();
@@ -34,11 +26,11 @@ fn main() -> MainResult {
         picker::run(
             coauthors_config.coauthors,
             &mob_set,
-            move |output: GitMobOutput| writer::write(&template_file, &mob_file, output),
+            move |output: GitMobOutput| write(&template_file, &mob_file, output),
         );
         Ok(())
     } else {
         let output = process(&coauthors_config.coauthors, &mob_set, &args);
-        writer::write(&template_file, &mob_file, output)
+        write(&template_file, &mob_file, output)
     }
 }

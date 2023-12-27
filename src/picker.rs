@@ -3,13 +3,13 @@ use cursive::views::ScrollView;
 use cursive::views::{Checkbox, Dialog};
 use cursive::{event::Key, views::ListView};
 
-use git_mob::trailers;
-use git_mob::Coauthors;
-use git_mob::GitMobOutput;
-use git_mob::MainResult;
-use git_mob::Mob;
+use crate::core::trailers;
+use crate::core::Coauthors;
+use crate::core::Mob;
+use crate::git_mob_cmd::GitMobOutput;
+use crate::git_mob_cmd::MainResult;
 
-pub(crate) fn run<F>(coauthors: Coauthors, mob: &Mob, write: F)
+pub fn run<F>(coauthors: Coauthors, mob: &Mob, write: F)
 where
     F: Fn(GitMobOutput) -> MainResult + 'static,
 {
