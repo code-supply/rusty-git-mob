@@ -41,6 +41,33 @@ Co-authored-by: Fred Brookes <fred@example.com>
     )
 }
 
+#[test]
+fn adds_coauthors_to_existing_message() {
+    assert_eq!(
+        prepare_commit_message(
+            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
+            &Mob::from(["ab".to_string(), "fb".to_string()]),
+            r#"Hello, World!
+
+# some comments
+# go here
+"#
+            .to_string()
+        ),
+        PrepareCommitMessageOutput {
+            message: r#"Hello, World!
+
+Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+Co-authored-by: Fred Brookes <fred@example.com>
+
+# some comments
+# go here
+"#
+            .to_string()
+        }
+    )
+}
+
 fn coauthors(initials: &Mob) -> Coauthors {
     Coauthors::from([
         (

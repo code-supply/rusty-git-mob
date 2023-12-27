@@ -12,13 +12,20 @@ pub fn prepare_commit_message(
     mob: &Mob,
     message: String,
 ) -> PrepareCommitMessageOutput {
-    let ts = &trailers(coauthors, mob);
+    let trails = &trailers(coauthors, mob);
 
-    if ts.is_empty() {
+    if trails.is_empty() {
         PrepareCommitMessageOutput { message }
     } else {
-        PrepareCommitMessageOutput {
-            message: format!("{}\n\n{}", message, ts),
+        let parts: Vec<&str> = message.splitn(2, "\n#").collect();
+
+        match parts[..] {
+            [before, after] => PrepareCommitMessageOutput {
+                message: format!("{}\n{}\n#{}", before, trails, after),
+            },
+            _ => PrepareCommitMessageOutput {
+                message: format!("{}\n\n{}", message, trails),
+            },
         }
     }
 }
