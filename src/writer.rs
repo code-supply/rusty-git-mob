@@ -1,9 +1,10 @@
-use crate::git_mob::GitMobOutput;
-use crate::git_mob::MainResult;
 use std::fs::File;
 use std::io;
 use std::io::Seek;
 use std::io::Write;
+
+use git_mob::GitMobOutput;
+use git_mob::MainResult;
 
 pub fn write(template_file: &File, mob_file: &File, output: GitMobOutput) -> MainResult {
     write_file(template_file, &output.template)?;

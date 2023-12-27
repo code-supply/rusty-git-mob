@@ -1,12 +1,13 @@
-use crate::git_mob::trailers;
-use crate::git_mob::Coauthors;
-use crate::git_mob::GitMobOutput;
-use crate::git_mob::MainResult;
-use crate::git_mob::Mob;
 use cursive::views::OnEventView;
 use cursive::views::ScrollView;
 use cursive::views::{Checkbox, Dialog};
 use cursive::{event::Key, views::ListView};
+
+use git_mob::trailers;
+use git_mob::Coauthors;
+use git_mob::GitMobOutput;
+use git_mob::MainResult;
+use git_mob::Mob;
 
 pub(crate) fn run<F>(coauthors: Coauthors, mob: &Mob, write: F)
 where
