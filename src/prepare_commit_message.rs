@@ -18,22 +18,29 @@ pub fn prepare_commit_message(
     mob: &Mob,
     message: String,
 ) -> PrepareCommitMessageOutput {
-    let trails = &trailers(coauthors, mob);
+    PrepareCommitMessageOutput {
+        message: convert_message(&trailers(coauthors, mob), message),
+    }
+}
 
-    if trails.is_empty() {
-        PrepareCommitMessageOutput { message }
+fn convert_message(configured_trailers: &String, message: String) -> String {
+    let message = if configured_trailers.is_empty() {
+        message
+    } else if is_only_comments(&message) {
+        format!("\n{}\n{}", configured_trailers, message)
     } else {
         let parts: Vec<&str> = message.splitn(2, "\n#").collect();
 
         match parts[..] {
-            [before, after] => PrepareCommitMessageOutput {
-                message: format!("{}\n{}\n#{}", before, trails, after),
-            },
-            _ => PrepareCommitMessageOutput {
-                message: format!("{}\n\n{}", message, trails),
-            },
+            [before, after] => format!("{}\n{}\n#{}", before, configured_trailers, after),
+            _ => format!("{}\n\n{}", message, configured_trailers),
         }
-    }
+    };
+    message
+}
+
+fn is_only_comments(message: &str) -> bool {
+    message.lines().all(|l| l.starts_with('#'))
 }
 
 #[cfg(test)]

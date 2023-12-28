@@ -68,6 +68,30 @@ Co-authored-by: Fred Brookes <fred@example.com>
     )
 }
 
+#[test]
+fn adds_newline_and_coauthors_to_a_comment_only_message() {
+    assert_eq!(
+        prepare_commit_message(
+            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
+            &Mob::from(["ab".to_string(), "fb".to_string()]),
+            r#"# some comments
+# go here
+"#
+            .to_string()
+        ),
+        PrepareCommitMessageOutput {
+            message: r#"
+Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+Co-authored-by: Fred Brookes <fred@example.com>
+
+# some comments
+# go here
+"#
+            .to_string()
+        }
+    )
+}
+
 fn coauthors(initials: &Mob) -> Coauthors {
     Coauthors::from([
         (
