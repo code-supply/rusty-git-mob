@@ -5,7 +5,6 @@ use git2::Repository;
 use rusty_git_mob::core::*;
 use rusty_git_mob::env;
 use rusty_git_mob::prepare_commit_message::*;
-use rusty_git_mob::writer::*;
 
 fn main() -> MainResult {
     let args = parse_args();
@@ -13,18 +12,11 @@ fn main() -> MainResult {
 
     let mut message_file = open_read_write(args.message_path.into())?;
     let mut message = String::new();
+    message_file.read_to_string(&mut message)?;
 
-    match message_file.read_to_string(&mut message) {
-        Ok(_) => {
-            let repo = Repository::open(".").unwrap();
-            let head = repo.head().unwrap();
-            let branch_name = head.shorthand();
-            let output = prepare_commit_message(&env.coauthors, &env.mob, message, branch_name);
+    let repo = Repository::open(".")?;
+    let head = repo.head()?;
+    let output = prepare_commit_message(&env.coauthors, &env.mob, message, head.shorthand());
 
-            write_file(&message_file, &output.message)?;
-
-            Ok(())
-        }
-        Err(_) => todo!(),
-    }
+    Ok(write_file(&message_file, &output.message)?)
 }

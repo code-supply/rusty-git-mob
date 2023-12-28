@@ -3,7 +3,6 @@ use std::fs::File;
 use clap::Parser;
 
 use crate::core::*;
-use crate::writer::*;
 
 pub type MainResult = Result<(), Box<dyn std::error::Error>>;
 

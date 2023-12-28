@@ -1,9 +1,11 @@
+use std::env;
 use std::fs::File;
 use std::io::BufReader;
+use std::path::PathBuf;
 
 use serde::Deserialize;
 
-use crate::core::{open_read_write, resolve_path, Coauthors, Mob};
+use crate::core::{open_read_write, Coauthors, Mob};
 
 pub struct Env {
     pub mob_file: File,
@@ -38,4 +40,17 @@ pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
         template_file,
         coauthors: coauthors_config.coauthors,
     })
+}
+
+fn resolve_path(env_var_name: &str, filename: &str) -> Result<PathBuf, String> {
+    match env::var(env_var_name) {
+        Ok(path) => Ok(PathBuf::from(path)),
+        Err(_e) => match home::home_dir() {
+            Some(path_buf) => Ok(path_buf.as_path().join(filename)),
+            None => Err(format!(
+                "{} not set and couldn't find your home dir!",
+                env_var_name
+            )),
+        },
+    }
 }

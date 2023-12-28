@@ -1,8 +1,11 @@
-use serde::Deserialize;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs::{File, OpenOptions};
+use std::io;
+use std::io::Seek;
+use std::io::Write;
 use std::path::PathBuf;
-use std::{env, io};
+
+use serde::Deserialize;
 
 pub type Mob = BTreeSet<String>;
 pub type Coauthors = BTreeMap<String, Coauthor>;
@@ -36,15 +39,8 @@ pub fn open_read_write(path: PathBuf) -> io::Result<File> {
     OpenOptions::new().read(true).write(true).open(path)
 }
 
-pub fn resolve_path(env_var_name: &str, filename: &str) -> Result<PathBuf, String> {
-    match env::var(env_var_name) {
-        Ok(path) => Ok(PathBuf::from(path)),
-        Err(_e) => match home::home_dir() {
-            Some(path_buf) => Ok(path_buf.as_path().join(filename)),
-            None => Err(format!(
-                "{} not set and couldn't find your home dir!",
-                env_var_name
-            )),
-        },
-    }
+pub fn write_file(mut file: &File, contents: &str) -> io::Result<()> {
+    file.set_len(0)?;
+    file.rewind()?;
+    file.write_all(contents.as_bytes())
 }
