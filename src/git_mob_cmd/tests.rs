@@ -1,5 +1,6 @@
 use super::*;
 use crate::core::Coauthor;
+use crate::git_mob_cmd::{self, Output};
 
 #[test]
 fn empty_input_returns_empty_output() {
@@ -12,7 +13,7 @@ fn empty_input_returns_empty_output() {
                 ..Default::default()
             }
         ),
-        GitMobOutput::default()
+        git_mob_cmd::Output::default()
     );
 }
 
@@ -27,7 +28,7 @@ fn forming_a_mob_outputs_the_mob_and_template() {
                 ..Default::default()
             }
         ),
-        GitMobOutput {
+        Output {
             message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
             template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
             mob: Mob::from(["ab".to_string()]),
@@ -46,7 +47,7 @@ fn can_add_many_mobsters() {
                 ..Default::default()
             }
         ),
-        GitMobOutput {
+        Output {
             message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                 .to_string(),
@@ -69,7 +70,7 @@ fn calling_without_initials_outputs_current_mob() {
                 ..Default::default()
             },
         ),
-        GitMobOutput {
+        Output {
             message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                 .to_string(),
@@ -93,7 +94,7 @@ fn soloing_shows_no_output_and_wipes_mob_and_template() {
                 pick: false
             },
         ),
-        GitMobOutput {
+        Output {
             message: "".to_string(),
             template: "".to_string(),
             mob: Mob::new(),

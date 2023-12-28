@@ -21,8 +21,8 @@ pub fn prepare_commit_message(
     mob: &Mob,
     message: String,
     branch_name: Option<&str>,
-) -> PrepareCommitMessageOutput {
-    PrepareCommitMessageOutput {
+) -> Output {
+    Output {
         message: convert_message(&trailers(coauthors, mob), message, branch_name),
     }
 }

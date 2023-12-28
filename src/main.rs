@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::BufReader;
 
 use git_mob::core::*;
+use git_mob::git_mob_cmd::Output;
 use git_mob::git_mob_cmd::*;
 use git_mob::picker;
 
@@ -26,7 +27,7 @@ fn main() -> MainResult {
         picker::run(
             coauthors_config.coauthors,
             &mob_set,
-            move |output: GitMobOutput| write(&template_file, &mob_file, output),
+            move |output: Output| write(&template_file, &mob_file, output),
         );
         Ok(())
     } else {

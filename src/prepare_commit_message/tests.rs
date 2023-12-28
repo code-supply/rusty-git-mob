@@ -9,7 +9,7 @@ fn empty_coauthors_produces_empty_message() {
             "".to_string(),
             Some("main")
         ),
-        PrepareCommitMessageOutput::default()
+        Output::default()
     );
 }
 
@@ -22,7 +22,7 @@ fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
             "# original comment".to_string(),
             Some("main")
         ),
-        PrepareCommitMessageOutput {
+        Output {
             message: "# original comment".to_string()
         }
     );
@@ -37,7 +37,7 @@ fn adds_coauthors_to_message_without_comments() {
             "Hello, World!".to_string(),
             Some("main")
         ),
-        PrepareCommitMessageOutput {
+        Output {
             message: r#"Hello, World!
 
 Co-authored-by: Andrew Bruce <me@andrewbruce.net>
@@ -62,7 +62,7 @@ fn adds_coauthors_to_existing_message() {
             .to_string(),
             Some("main")
         ),
-        PrepareCommitMessageOutput {
+        Output {
             message: r#"Hello, World!
 
 Co-authored-by: Andrew Bruce <me@andrewbruce.net>
@@ -88,7 +88,7 @@ fn adds_newline_and_coauthors_to_a_comment_only_message() {
             .to_string(),
             Some("main")
         ),
-        PrepareCommitMessageOutput {
+        Output {
             message: r#"
 Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>
@@ -118,7 +118,7 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
             message.clone(),
             Some("main")
         ),
-        PrepareCommitMessageOutput { message }
+        Output { message }
     )
 }
 
@@ -133,7 +133,7 @@ fn does_not_change_commits_during_a_rebase() {
             message.clone(),
             None
         ),
-        PrepareCommitMessageOutput { message }
+        Output { message }
     )
 }
 

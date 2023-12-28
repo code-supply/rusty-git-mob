@@ -6,12 +6,12 @@ use cursive::{event::Key, views::ListView};
 use crate::core::trailers;
 use crate::core::Coauthors;
 use crate::core::Mob;
-use crate::git_mob_cmd::GitMobOutput;
 use crate::git_mob_cmd::MainResult;
+use crate::git_mob_cmd::Output;
 
 pub fn run<F>(coauthors: Coauthors, mob: &Mob, write: F)
 where
-    F: Fn(GitMobOutput) -> MainResult + 'static,
+    F: Fn(Output) -> MainResult + 'static,
 {
     let mut siv = cursive::default();
 
@@ -28,14 +28,14 @@ where
 
 fn dialog<F>(view: ScrollView<ListView>, coauthors: Coauthors, write: F) -> Dialog
 where
-    F: Fn(GitMobOutput) -> MainResult + 'static,
+    F: Fn(Output) -> MainResult + 'static,
 {
     Dialog::around(view)
         .title("Mob up with")
         .button("OK", move |s| {
             s.with_user_data(|mob: &mut Mob| {
                 let ts = trailers(&coauthors, mob);
-                write(GitMobOutput {
+                write(Output {
                     message: ts.clone(),
                     template: ts,
                     mob: mob.clone(),

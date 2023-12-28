@@ -19,7 +19,7 @@ pub struct Coauthor {
 }
 
 #[derive(Debug, PartialEq, Default)]
-pub struct PrepareCommitMessageOutput {
+pub struct Output {
     pub message: String,
 }
 

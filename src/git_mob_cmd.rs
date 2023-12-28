@@ -20,7 +20,7 @@ pub struct Args {
 }
 
 #[derive(Debug, PartialEq, Default)]
-pub struct GitMobOutput {
+pub struct Output {
     pub message: String,
     pub template: String,
     pub mob: Mob,
@@ -30,7 +30,7 @@ pub fn parse_args() -> Args {
     Args::parse()
 }
 
-pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> GitMobOutput {
+pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
     let initials = Mob::from_iter(args.initials.iter().cloned());
 
     if args.solo {
@@ -42,8 +42,8 @@ pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> GitMobOutput {
     }
 }
 
-pub fn output(formatted_trailers: &str, mob: &Mob) -> GitMobOutput {
-    GitMobOutput {
+pub fn output(formatted_trailers: &str, mob: &Mob) -> Output {
+    Output {
         message: formatted_trailers.to_string(),
         template: if formatted_trailers.is_empty() {
             "".to_string()
@@ -54,7 +54,7 @@ pub fn output(formatted_trailers: &str, mob: &Mob) -> GitMobOutput {
     }
 }
 
-pub fn write(template_file: &File, mob_file: &File, output: GitMobOutput) -> MainResult {
+pub fn write(template_file: &File, mob_file: &File, output: Output) -> MainResult {
     write_file(template_file, &output.template)?;
 
     let mob_json = serde_json::to_string(&output.mob)? + "\n";
