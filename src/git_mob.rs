@@ -10,9 +10,6 @@ pub type MainResult = Result<(), Box<dyn std::error::Error>>;
 #[derive(Parser, Debug, Default)]
 pub struct Args {
     #[arg(short, long)]
-    pub solo: bool,
-
-    #[arg(short, long)]
     pub pick: bool,
 
     #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
@@ -33,9 +30,7 @@ pub fn parse_args() -> Args {
 pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
     let initials = Mob::from_iter(args.initials.iter().cloned());
 
-    if args.solo {
-        output("", &Mob::new())
-    } else if initials.is_empty() {
+    if initials.is_empty() {
         output(&trailers(coauthors, mob), mob)
     } else {
         output(&trailers(coauthors, &initials), &initials)

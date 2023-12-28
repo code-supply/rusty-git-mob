@@ -1,37 +1,21 @@
-use std::fs::File;
-use std::io::BufReader;
-
-use rusty_git_mob::core::*;
+use rusty_git_mob::env;
 use rusty_git_mob::git_mob::Output;
 use rusty_git_mob::git_mob::*;
 use rusty_git_mob::picker;
 
 fn main() -> MainResult {
     let args = parse_args();
-
-    let coauthors_path = resolve_path("GIT_MOB_COAUTHORS", ".git-coauthors")?;
-    let mob_path = resolve_path("GIT_MOB_LIST", ".git-mob")?;
-    let template_path = resolve_path("GIT_MOB_TEMPLATE", ".gitmessage.txt")?;
-
-    let coauthors_file = File::open(coauthors_path)?;
-    let mob_file = open_read_write(mob_path)?;
-    let template_file = open_read_write(template_path)?;
-
-    let coauthors_config: CoauthorsConfig =
-        serde_json::from_reader(BufReader::new(coauthors_file))?;
-    let mob: Vec<String> = serde_json::from_reader(BufReader::new(&mob_file))?;
-
-    let mob_set: Mob = Mob::from_iter(mob.iter().cloned());
+    let env = env::load()?;
 
     if args.pick {
         picker::run(
-            coauthors_config.coauthors,
-            &mob_set,
-            move |output: Output| write(&template_file, &mob_file, output),
+            env.coauthors_config.coauthors,
+            &env.mob,
+            move |output: Output| write(&env.template_file, &env.mob_file, output),
         );
         Ok(())
     } else {
-        let output = process(&coauthors_config.coauthors, &mob_set, &args);
-        write(&template_file, &mob_file, output)
+        let output = process(&env.coauthors_config.coauthors, &env.mob, &args);
+        write(&env.template_file, &env.mob_file, output)
     }
 }

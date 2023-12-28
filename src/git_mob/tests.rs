@@ -83,26 +83,6 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
 }
 
 #[test]
-fn soloing_shows_no_output_and_wipes_mob_and_template() {
-    assert_eq!(
-        process(
-            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
-            &Mob::from(["ab".to_string(), "fb".to_string()]),
-            &Args {
-                initials: vec!["ab".to_string()],
-                solo: true,
-                pick: false
-            },
-        ),
-        Output {
-            message: "".to_string(),
-            template: "".to_string(),
-            mob: Mob::new(),
-        }
-    )
-}
-
-#[test]
 fn coauthors_are_sorted_by_initials() {
     let a = coauthors(&Mob::from(["ab".to_string(), "fb".to_string()]));
     let expected: Vec<_> = a.iter().collect();
