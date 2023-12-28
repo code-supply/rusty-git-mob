@@ -6,6 +6,7 @@ use git2::Repository;
 
 use git_mob::core::*;
 use git_mob::prepare_commit_message::*;
+use git_mob::writer::*;
 
 fn main() -> MainResult {
     let args = parse_args();
@@ -23,17 +24,14 @@ fn main() -> MainResult {
             let coauthors_config: CoauthorsConfig =
                 serde_json::from_reader(BufReader::new(coauthors_file))?;
             let mob: Vec<String> = serde_json::from_reader(BufReader::new(&mob_file))?;
-
             let mob_set: Mob = Mob::from_iter(mob.iter().cloned());
-
             let repo = Repository::open(".").unwrap();
             let head = repo.head().unwrap();
             let branch_name = head.shorthand();
-
             let output =
                 prepare_commit_message(&coauthors_config.coauthors, &mob_set, message, branch_name);
 
-            print!("{:?}", output);
+            write_file(&message_file, &output.message)?;
 
             Ok(())
         }
