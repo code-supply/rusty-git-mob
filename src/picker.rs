@@ -6,8 +6,8 @@ use cursive::{event::Key, views::ListView};
 use crate::core::trailers;
 use crate::core::Coauthors;
 use crate::core::Mob;
-use crate::git_mob_cmd::MainResult;
-use crate::git_mob_cmd::Output;
+use crate::git_mob::MainResult;
+use crate::git_mob::Output;
 
 pub fn run<F>(coauthors: Coauthors, mob: &Mob, write: F)
 where

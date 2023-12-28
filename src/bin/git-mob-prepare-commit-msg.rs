@@ -4,9 +4,9 @@ use std::io::Read;
 
 use git2::Repository;
 
-use git_mob::core::*;
-use git_mob::prepare_commit_message::*;
-use git_mob::writer::*;
+use rusty_git_mob::core::*;
+use rusty_git_mob::prepare_commit_message::*;
+use rusty_git_mob::writer::*;
 
 fn main() -> MainResult {
     let args = parse_args();

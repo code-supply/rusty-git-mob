@@ -1,10 +1,10 @@
 use std::fs::File;
 use std::io::BufReader;
 
-use git_mob::core::*;
-use git_mob::git_mob_cmd::Output;
-use git_mob::git_mob_cmd::*;
-use git_mob::picker;
+use rusty_git_mob::core::*;
+use rusty_git_mob::git_mob::Output;
+use rusty_git_mob::git_mob::*;
+use rusty_git_mob::picker;
 
 fn main() -> MainResult {
     let args = parse_args();

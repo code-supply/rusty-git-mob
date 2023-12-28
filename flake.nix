@@ -25,7 +25,7 @@
       packages.x86_64-linux.default = with pkgs; rustPlatform.buildRustPackage {
         name = "git-mob";
         src = ./.;
-        cargoHash = "sha256-O7a9h9pGP4lEIe7Mq5ZgcKLk4rvP/JfBrqxa9GwfsHU=";
+        cargoHash = "sha256-ndogLQf1Q+UPgTgRwGKxvvhnDAPBH5Ct6OLyL90STgY=";
 
         nativeBuildInputs = [ pkg-config ];
         buildInputs = [ ncurses openssl ];
