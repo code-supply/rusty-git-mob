@@ -24,7 +24,7 @@ pub fn prepare_commit_message(
 }
 
 fn convert_message(configured_trailers: &String, message: String) -> String {
-    let message = if configured_trailers.is_empty() {
+    if configured_trailers.is_empty() || has_coauthors(&message) {
         message
     } else if is_only_comments(&message) {
         format!("\n{}\n{}", configured_trailers, message)
@@ -35,8 +35,13 @@ fn convert_message(configured_trailers: &String, message: String) -> String {
             [before, after] => format!("{}\n{}\n#{}", before, configured_trailers, after),
             _ => format!("{}\n\n{}", message, configured_trailers),
         }
-    };
+    }
+}
+
+fn has_coauthors(message: &str) -> bool {
     message
+        .lines()
+        .any(|l| l.to_lowercase().starts_with("co-authored-by:"))
 }
 
 fn is_only_comments(message: &str) -> bool {

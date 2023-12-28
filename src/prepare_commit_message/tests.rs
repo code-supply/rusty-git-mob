@@ -92,6 +92,26 @@ Co-authored-by: Fred Brookes <fred@example.com>
     )
 }
 
+#[test]
+fn preserves_existing_coauthors() {
+    let message = r#"I'm a commit that's bound to be amended
+
+cO-aUthoRed-by: Original Author <og@authors.biz>
+
+# some comments
+# go here
+"#
+    .to_string();
+    assert_eq!(
+        prepare_commit_message(
+            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
+            &Mob::from(["ab".to_string(), "fb".to_string()]),
+            message.clone()
+        ),
+        PrepareCommitMessageOutput { message }
+    )
+}
+
 fn coauthors(initials: &Mob) -> Coauthors {
     Coauthors::from([
         (
