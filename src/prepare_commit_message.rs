@@ -17,14 +17,19 @@ pub fn prepare_commit_message(
     coauthors: &Coauthors,
     mob: &Mob,
     message: String,
+    branch_name: Option<&str>,
 ) -> PrepareCommitMessageOutput {
     PrepareCommitMessageOutput {
-        message: convert_message(&trailers(coauthors, mob), message),
+        message: convert_message(&trailers(coauthors, mob), message, branch_name),
     }
 }
 
-fn convert_message(configured_trailers: &String, message: String) -> String {
-    if configured_trailers.is_empty() || has_coauthors(&message) {
+fn convert_message(
+    configured_trailers: &String,
+    message: String,
+    branch_name: Option<&str>,
+) -> String {
+    if branch_name.is_none() || configured_trailers.is_empty() || has_coauthors(&message) {
         message
     } else if is_only_comments(&message) {
         format!("\n{}\n{}", configured_trailers, message)

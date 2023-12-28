@@ -4,12 +4,18 @@
     in {
       formatter.x86_64-linux = pkgs.nixpkgs-fmt;
       devShells.x86_64-linux.default = pkgs.mkShell {
+        shellHook = ''
+          export OPENSSL_DEV=${pkgs.openssl.dev}
+        '';
+
         packages = with pkgs; [
           cargo
           cargo-watch
           clippy
           ncurses
           nixpkgs-fmt
+          openssl
+          pkg-config
           rust-analyzer
           rustc
           rustfmt

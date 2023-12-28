@@ -2,6 +2,8 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::Read;
 
+use git2::Repository;
+
 use git_mob::core::*;
 use git_mob::prepare_commit_message::*;
 
@@ -24,7 +26,12 @@ fn main() -> MainResult {
 
             let mob_set: Mob = Mob::from_iter(mob.iter().cloned());
 
-            let output = prepare_commit_message(&coauthors_config.coauthors, &mob_set, message);
+            let repo = Repository::open(".").unwrap();
+            let head = repo.head().unwrap();
+            let branch_name = head.shorthand();
+
+            let output =
+                prepare_commit_message(&coauthors_config.coauthors, &mob_set, message, branch_name);
 
             print!("{:?}", output);
 

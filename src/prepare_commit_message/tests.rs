@@ -3,7 +3,12 @@ use super::*;
 #[test]
 fn empty_coauthors_produces_empty_message() {
     assert_eq!(
-        prepare_commit_message(&Coauthors::default(), &Mob::default(), "".to_string()),
+        prepare_commit_message(
+            &Coauthors::default(),
+            &Mob::default(),
+            "".to_string(),
+            Some("main")
+        ),
         PrepareCommitMessageOutput::default()
     );
 }
@@ -14,7 +19,8 @@ fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
         prepare_commit_message(
             &Coauthors::default(),
             &Mob::default(),
-            "# original comment".to_string()
+            "# original comment".to_string(),
+            Some("main")
         ),
         PrepareCommitMessageOutput {
             message: "# original comment".to_string()
@@ -28,7 +34,8 @@ fn adds_coauthors_to_message_without_comments() {
         prepare_commit_message(
             &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
             &Mob::from(["ab".to_string(), "fb".to_string()]),
-            "Hello, World!".to_string()
+            "Hello, World!".to_string(),
+            Some("main")
         ),
         PrepareCommitMessageOutput {
             message: r#"Hello, World!
@@ -52,7 +59,8 @@ fn adds_coauthors_to_existing_message() {
 # some comments
 # go here
 "#
-            .to_string()
+            .to_string(),
+            Some("main")
         ),
         PrepareCommitMessageOutput {
             message: r#"Hello, World!
@@ -77,7 +85,8 @@ fn adds_newline_and_coauthors_to_a_comment_only_message() {
             r#"# some comments
 # go here
 "#
-            .to_string()
+            .to_string(),
+            Some("main")
         ),
         PrepareCommitMessageOutput {
             message: r#"
@@ -106,7 +115,23 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
         prepare_commit_message(
             &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
             &Mob::from(["ab".to_string(), "fb".to_string()]),
-            message.clone()
+            message.clone(),
+            Some("main")
+        ),
+        PrepareCommitMessageOutput { message }
+    )
+}
+
+#[test]
+fn does_not_change_commits_during_a_rebase() {
+    let message = "I'm a commit without trailers".to_string();
+
+    assert_eq!(
+        prepare_commit_message(
+            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
+            &Mob::from(["ab".to_string(), "fb".to_string()]),
+            message.clone(),
+            None
         ),
         PrepareCommitMessageOutput { message }
     )
