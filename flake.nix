@@ -22,11 +22,13 @@
         ];
       };
 
-      packages.x86_64-linux.default = pkgs.rustPlatform.buildRustPackage {
+      packages.x86_64-linux.default = with pkgs; rustPlatform.buildRustPackage {
         name = "git-mob";
         src = ./.;
-        cargoHash = "sha256-SdHL1FBowRMgbl5S3gUJgDCPBRM9WWNFZ5hEV265XO0=";
-        buildInputs = [ pkgs.ncurses ];
+        cargoHash = "sha256-O7a9h9pGP4lEIe7Mq5ZgcKLk4rvP/JfBrqxa9GwfsHU=";
+
+        nativeBuildInputs = [ pkg-config ];
+        buildInputs = [ ncurses openssl ];
       };
     };
 }
