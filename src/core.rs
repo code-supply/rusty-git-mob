@@ -7,11 +7,6 @@ use std::{env, io};
 pub type Mob = BTreeSet<String>;
 pub type Coauthors = BTreeMap<String, Coauthor>;
 
-#[derive(Clone, Debug, Default, Deserialize, PartialEq)]
-pub struct CoauthorsConfig {
-    pub coauthors: Coauthors,
-}
-
 #[derive(Clone, Deserialize, Debug, PartialEq)]
 pub struct Coauthor {
     pub name: String,

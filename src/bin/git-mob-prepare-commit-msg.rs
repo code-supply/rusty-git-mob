@@ -19,12 +19,7 @@ fn main() -> MainResult {
             let repo = Repository::open(".").unwrap();
             let head = repo.head().unwrap();
             let branch_name = head.shorthand();
-            let output = prepare_commit_message(
-                &env.coauthors_config.coauthors,
-                &env.mob,
-                message,
-                branch_name,
-            );
+            let output = prepare_commit_message(&env.coauthors, &env.mob, message, branch_name);
 
             write_file(&message_file, &output.message)?;
 

@@ -8,14 +8,12 @@ fn main() -> MainResult {
     let env = env::load()?;
 
     if args.pick {
-        picker::run(
-            env.coauthors_config.coauthors,
-            &env.mob,
-            move |output: Output| write(&env.template_file, &env.mob_file, output),
-        );
+        picker::run(env.coauthors, &env.mob, move |output: Output| {
+            write(&env.template_file, &env.mob_file, output)
+        });
         Ok(())
     } else {
-        let output = process(&env.coauthors_config.coauthors, &env.mob, &args);
+        let output = process(&env.coauthors, &env.mob, &args);
         write(&env.template_file, &env.mob_file, output)
     }
 }

@@ -1,13 +1,20 @@
 use std::fs::File;
 use std::io::BufReader;
 
-use crate::core::{open_read_write, resolve_path, CoauthorsConfig, Mob};
+use serde::Deserialize;
+
+use crate::core::{open_read_write, resolve_path, Coauthors, Mob};
 
 pub struct Env {
     pub mob_file: File,
     pub mob: Mob,
     pub template_file: File,
-    pub coauthors_config: CoauthorsConfig,
+    pub coauthors: Coauthors,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, PartialEq)]
+pub struct CoauthorsConfig {
+    pub coauthors: Coauthors,
 }
 
 pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
@@ -29,6 +36,6 @@ pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
         mob_file,
         mob: mob_set,
         template_file,
-        coauthors_config,
+        coauthors: coauthors_config.coauthors,
     })
 }
