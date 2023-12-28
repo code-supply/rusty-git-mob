@@ -7,6 +7,9 @@ pub type MainResult = Result<(), Box<dyn std::error::Error>>;
 #[derive(Parser, Debug, Default)]
 pub struct Args {
     pub message_path: String,
+
+    #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+    pub rest: Vec<String>,
 }
 
 pub fn parse_args() -> Args {
