@@ -44,6 +44,6 @@
         default = callPackage ./shell.nix { };
       });
 
-      nixosModules.home-manager = import ./home-manager-module { inherit packages; };
+      nixosModules.homeManager = import ./home-manager-module { inherit packages; };
     };
 }
