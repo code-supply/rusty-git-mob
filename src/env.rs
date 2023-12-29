@@ -15,7 +15,7 @@ pub struct Env {
 }
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
-pub struct CoauthorsConfig {
+struct CoauthorsConfig {
     pub coauthors: Coauthors,
 }
 
