@@ -23,8 +23,14 @@
             inherit pkgs callPackage;
           }
         ));
+
+      packages = forAllSystems ({ callPackage, ... }: {
+        default = callPackage ./. { };
+      });
     in
     {
+      inherit packages;
+
       formatter = forAllSystems ({ pkgs, ... }: pkgs.nixpkgs-fmt);
 
       apps = forAllSystems ({ callPackage, ... }: {
@@ -34,12 +40,10 @@
         };
       });
 
-      packages = forAllSystems ({ callPackage, ... }: {
-        default = callPackage ./. { };
-      });
-
       devShells = forAllSystems ({ callPackage, ... }: {
         default = callPackage ./shell.nix { };
       });
+
+      nixosModules.home-manager = import ./home-manager-module { inherit packages; };
     };
 }
