@@ -1,9 +1,8 @@
 use std::io::Read;
 
-use git2::Repository;
-
 use rusty_git_mob::core::*;
 use rusty_git_mob::env;
+use rusty_git_mob::git;
 use rusty_git_mob::prepare_commit_message::*;
 
 fn main() -> MainResult {
@@ -14,9 +13,8 @@ fn main() -> MainResult {
     let mut message = String::new();
     message_file.read_to_string(&mut message)?;
 
-    let repo = Repository::open(".")?;
-    let head = repo.head()?;
-    let output = prepare_commit_message(&env.coauthors, &env.mob, message, head.shorthand());
+    let output =
+        prepare_commit_message(&env.coauthors, &env.mob, message, git::head(".").as_deref());
 
     Ok(write_file(&message_file, &output.message)?)
 }

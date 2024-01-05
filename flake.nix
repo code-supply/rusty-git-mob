@@ -1,7 +1,6 @@
 {
   outputs = { self, nixpkgs }:
     let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
       forAllSystems = generate: nixpkgs.lib.genAttrs [
         "aarch64-darwin"
         "x86_64-darwin"
