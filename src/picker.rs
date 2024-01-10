@@ -6,6 +6,7 @@ use cursive::{event::Key, views::ListView};
 use crate::core::trailers;
 use crate::core::Coauthors;
 use crate::core::Mob;
+use crate::git_mob::output;
 use crate::git_mob::MainResult;
 use crate::git_mob::Output;
 
@@ -35,11 +36,7 @@ where
         .button("OK", move |s| {
             s.with_user_data(|mob: &mut Mob| {
                 let ts = trailers(&coauthors, mob);
-                write(Output {
-                    message: ts.clone(),
-                    template: ts,
-                    mob: mob.clone(),
-                })
+                write(output(&ts, mob))
             });
             s.quit()
         })

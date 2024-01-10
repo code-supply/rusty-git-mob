@@ -74,7 +74,9 @@ fn calling_without_initials_outputs_current_mob() {
             message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                 .to_string(),
-            template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>
+            template: "
+
+Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                 .to_string(),
             mob: Mob::from(["ab".to_string(), "fb".to_string()]),
