@@ -6,9 +6,9 @@ with lib.lists;
 with pkgs;
 
 rustPlatform.buildRustPackage {
-  name = "git-mob";
+  name = "rusty-git-mob";
   src = ./.;
-  cargoHash = "sha256-ndogLQf1Q+UPgTgRwGKxvvhnDAPBH5Ct6OLyL90STgY=";
+  cargoHash = "sha256-cvBenRifTewzZMd+UShKFvWUQ/sDSYDXWlhfbGgqN7g=";
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [ ncurses openssl ] ++
