@@ -35,7 +35,7 @@ fn head_of_one_commit_is_a_short_string() {
 
 #[test]
 fn head_of_no_commits_is_none() {
-    let dir = "/tmp/my-fixture";
+    let dir = "tmp/my-fixture";
     let _maybe_remove = std::fs::remove_dir_all(dir);
     Repository::init(dir).expect("couldn't make fixture repo");
     assert_eq!(head(dir), None);

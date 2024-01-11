@@ -25,9 +25,9 @@ pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
     let mob_path = resolve_path("GIT_MOB_LIST", ".git-mob")?;
     let template_path = resolve_path("GIT_MOB_TEMPLATE", ".gitmessage.txt")?;
 
-    let coauthors_file = File::open(coauthors_path)?;
-    let mob_file = open_read_write(mob_path)?;
-    let template_file = open_read_write(template_path)?;
+    let coauthors_file = File::open(coauthors_path).expect("coauthors file error");
+    let mob_file = open_read_write(mob_path).expect("mob file error");
+    let template_file = open_read_write(template_path).expect("template file error");
 
     let coauthors_config: CoauthorsConfig =
         serde_json::from_reader(BufReader::new(coauthors_file))?;
