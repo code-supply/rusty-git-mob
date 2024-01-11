@@ -1,3 +1,4 @@
+use serde_json;
 use std::env;
 use std::fs::File;
 use std::io::BufReader;
@@ -30,9 +31,12 @@ pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
 
     let coauthors_config: CoauthorsConfig =
         serde_json::from_reader(BufReader::new(coauthors_file))?;
-    let mob: Vec<String> = serde_json::from_reader(BufReader::new(&mob_file))?;
 
-    let mob_set: Mob = Mob::from_iter(mob.iter().cloned());
+    let mob: serde_json::Result<Vec<String>> = serde_json::from_reader(BufReader::new(&mob_file));
+    let mob_set = match mob {
+        Ok(mob) => Mob::from_iter(mob.iter().cloned()),
+        Err(_) => Mob::default(),
+    };
 
     Ok(Env {
         mob_file,
@@ -54,3 +58,6 @@ fn resolve_path(env_var_name: &str, filename: &str) -> Result<PathBuf, String> {
         },
     }
 }
+
+#[cfg(test)]
+mod tests;

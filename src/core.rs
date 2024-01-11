@@ -36,7 +36,11 @@ pub fn trailers(coauthors: &Coauthors, initials: &Mob) -> String {
 }
 
 pub fn open_read_write(path: PathBuf) -> io::Result<File> {
-    OpenOptions::new().read(true).write(true).open(path)
+    OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create(true)
+        .open(path)
 }
 
 pub fn write_file(mut file: &File, contents: &str) -> io::Result<()> {
