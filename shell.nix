@@ -1,10 +1,16 @@
-{ pkgs }:
-pkgs.mkShell {
+{ lib
+, pkgs
+}:
+
+with lib.lists;
+with pkgs;
+
+mkShell {
   shellHook = ''
-    export OPENSSL_DEV=${pkgs.openssl.dev}
+    export OPENSSL_DEV=${openssl.dev}
   '';
 
-  packages = with pkgs; [
+  packages = [
     cargo
     cargo-watch
     clippy
@@ -15,5 +21,6 @@ pkgs.mkShell {
     rust-analyzer
     rustc
     rustfmt
-  ];
+  ] ++ (optional stdenv.isDarwin darwin.apple_sdk.frameworks.Security)
+  ++ (optional stdenv.isDarwin libiconv);
 }
