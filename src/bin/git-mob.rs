@@ -1,3 +1,4 @@
+use rusty_git_mob::core;
 use rusty_git_mob::env;
 use rusty_git_mob::git_mob::Output;
 use rusty_git_mob::git_mob::*;
@@ -8,12 +9,15 @@ fn main() -> MainResult {
     let env = env::load()?;
 
     if args.pick {
-        picker::run(env.coauthors, &env.mob, move |output: Output| {
+        picker::run(env.org, &env.mob, move |output: Output| {
             write(&env.template_file, &env.mob_file, output)
         });
         Ok(())
     } else {
-        let output = process(&env.coauthors, &env.mob, &args);
-        write(&env.template_file, &env.mob_file, output)
+        write(
+            &env.template_file,
+            &env.mob_file,
+            process(&core::whole_org_as_team(&env.org), &env.mob, &args),
+        )
     }
 }

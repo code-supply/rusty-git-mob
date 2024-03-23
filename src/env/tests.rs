@@ -9,7 +9,7 @@ fn git_mob_file_gets_initialised_when_non_existent() {
     std::env::set_var("GIT_MOB_LIST", "tmp/non-existent-file");
 
     let mut file = File::create("tmp/existent-coauthors").unwrap();
-    file.write_all(b"{\"coauthors\": {}}").unwrap();
+    file.write_all(b"{\"teams\": {}}").unwrap();
 
     std::env::set_var("GIT_MOB_COAUTHORS", "tmp/existent-coauthors");
     std::env::set_var("GIT_MOB_TEMPLATE", "tmp/existent-template");

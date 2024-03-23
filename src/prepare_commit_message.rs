@@ -17,13 +17,17 @@ pub fn parse_args() -> Args {
 }
 
 pub fn prepare_commit_message(
-    coauthors: &Team,
+    org: &Org,
     mob: &Mob,
     message: String,
     branch_name: Option<&str>,
 ) -> Output {
     Output {
-        message: convert_message(&trailers(coauthors, mob), message, branch_name),
+        message: convert_message(
+            &trailers(&whole_org_as_team(org), mob),
+            message,
+            branch_name,
+        ),
     }
 }
 

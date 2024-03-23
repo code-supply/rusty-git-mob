@@ -8,6 +8,7 @@ use std::path::PathBuf;
 use serde::Deserialize;
 
 pub type Mob = BTreeSet<String>;
+pub type Org = BTreeMap<String, Team>;
 pub type Team = BTreeMap<String, Coauthor>;
 
 #[derive(Clone, Deserialize, Debug, PartialEq)]
@@ -33,6 +34,12 @@ pub fn trailers(coauthors: &Team, initials: &Mob) -> String {
             }
             None => acc,
         })
+}
+
+pub fn whole_org_as_team(org: &Org) -> Team {
+    org.values().fold(Team::new(), |acc, team| {
+        acc.into_iter().chain(team.to_owned()).collect()
+    })
 }
 
 pub fn open_read_write(path: PathBuf) -> io::Result<File> {

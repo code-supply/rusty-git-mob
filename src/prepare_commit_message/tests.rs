@@ -4,7 +4,7 @@ use super::*;
 fn empty_coauthors_produces_empty_message() {
     assert_eq!(
         prepare_commit_message(
-            &Team::default(),
+            &Org::from([("cool gang".to_owned(), Team::default(),)]),
             &Mob::default(),
             "".to_owned(),
             Some("main")
@@ -17,7 +17,7 @@ fn empty_coauthors_produces_empty_message() {
 fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
     assert_eq!(
         prepare_commit_message(
-            &Team::default(),
+            &Org::from([("cool gang".to_owned(), Team::default(),)]),
             &Mob::default(),
             "# original comment".to_owned(),
             Some("main")
@@ -32,7 +32,10 @@ fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
 fn adds_coauthors_to_message_without_comments() {
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Org::from([(
+                "cool gang".to_owned(),
+                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            )]),
             &Mob::from(["ab".to_owned(), "fb".to_owned()]),
             "Hello, World!".to_owned(),
             Some("main")
@@ -52,7 +55,10 @@ Co-authored-by: Fred Brookes <fred@example.com>
 fn adds_coauthors_to_existing_message() {
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Org::from([(
+                "cool gang".to_owned(),
+                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            )]),
             &Mob::from(["ab".to_owned(), "fb".to_owned()]),
             r#"Hello, World!
 
@@ -80,7 +86,10 @@ Co-authored-by: Fred Brookes <fred@example.com>
 fn adds_newline_and_coauthors_to_a_comment_only_message() {
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Org::from([(
+                "cool gang".to_owned(),
+                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            )]),
             &Mob::from(["ab".to_owned(), "fb".to_owned()]),
             r#"# some comments
 # go here
@@ -113,7 +122,10 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
     .to_owned();
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Org::from([(
+                "cool gang".to_owned(),
+                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            )]),
             &Mob::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
             Some("main")
@@ -128,7 +140,10 @@ fn does_not_change_commits_during_a_rebase() {
 
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Org::from([(
+                "cool gang".to_owned(),
+                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()]))
+            )]),
             &Mob::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
             None

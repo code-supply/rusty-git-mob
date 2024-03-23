@@ -6,18 +6,18 @@ use std::path::PathBuf;
 
 use serde::Deserialize;
 
-use crate::core::{open_read_write, Mob, Team};
+use crate::core::{open_read_write, Mob, Org};
 
 pub struct Env {
     pub mob_file: File,
     pub mob: Mob,
     pub template_file: File,
-    pub coauthors: Team,
+    pub org: Org,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 struct CoauthorsConfig {
-    pub coauthors: Team,
+    pub teams: Org,
 }
 
 pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
@@ -42,7 +42,7 @@ pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
         mob_file,
         mob: mob_set,
         template_file,
-        coauthors: coauthors_config.coauthors,
+        org: coauthors_config.teams,
     })
 }
 
