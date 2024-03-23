@@ -1,6 +1,28 @@
 use super::*;
+use crate::core::Coauthor;
 
 use std::collections::HashSet;
+
+#[test]
+fn can_get_author_of_commit_without_trailers() {
+    let dir = "tmp/authors-no-trailers";
+    let repo = repo(
+        dir,
+        r#"[user]
+        name = "Anne Other"
+        email = "anne@example.com
+        "#,
+    );
+    let oid = commit(&repo, "Initial commit");
+
+    assert_eq!(
+        Ok(vec![Coauthor {
+            name: "Anne Other".to_owned(),
+            email: "anne@example.com".to_owned()
+        }]),
+        authors(dir, oid)
+    );
+}
 
 #[test]
 fn head_of_non_repository_is_none() {
@@ -10,23 +32,12 @@ fn head_of_non_repository_is_none() {
 #[test]
 fn head_of_one_commit_is_a_short_string() {
     let dir = "tmp/my-fixture-2";
-    let _maybe_remove = std::fs::remove_dir_all(dir);
-    let repo = Repository::init(dir).expect("couldn't make fixture repo");
     let config = r#"[user]
         name = "Anne Other"
         email = "anne@example.com
         "#;
-    std::fs::write(dir.to_owned() + "/.git/config", config).expect("couldn't write config");
-    let sig = repo.signature().expect("couldn't make signature");
-    let tree_id = {
-        let mut index = repo.index().expect("couldn't get index");
-        index.write_tree().expect("couldn't write tree")
-    };
-
-    let tree = repo.find_tree(tree_id).expect("couldn't find tree");
-
-    repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])
-        .expect("couldn't commit");
+    let repo = repo(dir, config);
+    commit(&repo, "Initial commit");
 
     assert!(
         HashSet::from([Some("master".to_owned()), Some("main".to_owned())]).contains(&head(dir))
@@ -36,7 +47,26 @@ fn head_of_one_commit_is_a_short_string() {
 #[test]
 fn head_of_no_commits_is_none() {
     let dir = "tmp/my-fixture";
-    let _maybe_remove = std::fs::remove_dir_all(dir);
-    Repository::init(dir).expect("couldn't make fixture repo");
+    repo(dir, "");
     assert_eq!(head(dir), None);
+}
+
+fn repo(dir: &str, config: &str) -> Repository {
+    let _maybe_remove = std::fs::remove_dir_all(dir);
+    let repo = Repository::init(dir).expect("couldn't make fixture repo");
+    std::fs::write(dir.to_owned() + "/.git/config", config).expect("couldn't write config");
+    repo
+}
+
+fn commit(repo: &Repository, message: &str) -> Oid {
+    let sig = repo.signature().expect("couldn't make signature");
+    let tree_id = {
+        let mut index = repo.index().expect("couldn't get index");
+        index.write_tree().expect("couldn't write tree")
+    };
+
+    let tree = repo.find_tree(tree_id).expect("couldn't find tree");
+
+    repo.commit(Some("HEAD"), &sig, &sig, message, &tree, &[])
+        .expect("couldn't commit")
 }
