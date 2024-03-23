@@ -11,7 +11,7 @@ pub type Mob = BTreeSet<String>;
 pub type Org = BTreeMap<String, Team>;
 pub type Team = BTreeMap<String, Coauthor>;
 
-#[derive(Clone, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Eq, PartialEq, Hash)]
 pub struct Coauthor {
     pub name: String,
     pub email: String,

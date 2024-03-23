@@ -4,23 +4,43 @@ use crate::core::Coauthor;
 use std::collections::HashSet;
 
 #[test]
+fn can_get_authors_of_commit_with_trailers() {
+    let dir = "tmp/authors-with-trailers";
+    let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
+    let oid = commit(
+        &repo,
+        "Initial commit
+co-autHoreD-By: nobod <y-par>seable
+co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
+    );
+
+    assert_eq!(
+        Ok(HashSet::from([
+            Coauthor {
+                name: "Anne Other".to_owned(),
+                email: "anne@example.com".to_owned()
+            },
+            Coauthor {
+                name: "Andrew Bruce".to_owned(),
+                email: "me@andrewbruce.net".to_owned()
+            }
+        ])),
+        commit_authors(dir, oid)
+    );
+}
+
+#[test]
 fn can_get_author_of_commit_without_trailers() {
     let dir = "tmp/authors-no-trailers";
-    let repo = repo(
-        dir,
-        r#"[user]
-        name = "Anne Other"
-        email = "anne@example.com
-        "#,
-    );
+    let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
     let oid = commit(&repo, "Initial commit");
 
     assert_eq!(
-        Ok(vec![Coauthor {
+        Ok(HashSet::from([Coauthor {
             name: "Anne Other".to_owned(),
             email: "anne@example.com".to_owned()
-        }]),
-        authors(dir, oid)
+        }])),
+        commit_authors(dir, oid)
     );
 }
 
@@ -32,11 +52,7 @@ fn head_of_non_repository_is_none() {
 #[test]
 fn head_of_one_commit_is_a_short_string() {
     let dir = "tmp/my-fixture-2";
-    let config = r#"[user]
-        name = "Anne Other"
-        email = "anne@example.com
-        "#;
-    let repo = repo(dir, config);
+    let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
     commit(&repo, "Initial commit");
 
     assert!(
@@ -69,4 +85,13 @@ fn commit(repo: &Repository, message: &str) -> Oid {
 
     repo.commit(Some("HEAD"), &sig, &sig, message, &tree, &[])
         .expect("couldn't commit")
+}
+
+fn committer_config(name: &str, email: &str) -> String {
+    format!(
+        r#"[user]
+        name = "{}"
+        email = "{}"#,
+        name, email
+    )
 }

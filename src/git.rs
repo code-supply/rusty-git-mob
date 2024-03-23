@@ -2,18 +2,36 @@ use crate::core::Coauthor;
 use git2::Error;
 use git2::Oid;
 use git2::Repository;
+use regex::Regex;
+use std::collections::HashSet;
 
-pub fn authors(dir: &str, oid: Oid) -> Result<Vec<Coauthor>, Error> {
+pub fn commit_authors(dir: &str, oid: Oid) -> Result<HashSet<Coauthor>, Error> {
     let repo = Repository::open(dir)?;
     let commit = repo.find_commit(oid)?;
+
+    let pattern = Regex::new(r"(?i)co-authored-by: (.+) <(.+)>$").unwrap();
+    let message = commit.message().expect("Couldn't get message");
+    let matches: Vec<_> = pattern.captures_iter(message).collect();
+
     let author = commit.author();
-    Ok(vec![Coauthor {
+    let mut authors = HashSet::from([Coauthor {
         name: author.name().expect("couldn't get author name").to_owned(),
         email: author
             .email()
             .expect("couldn't get author email")
             .to_owned(),
-    }])
+    }]);
+
+    for capture in matches {
+        let name = capture.get(1).expect("Couldn't get name");
+        let email = capture.get(2).expect("Couldn't get email");
+        authors.insert(Coauthor {
+            name: name.as_str().to_owned(),
+            email: email.as_str().to_owned(),
+        });
+    }
+
+    Ok(authors)
 }
 
 pub fn head(dir: &str) -> Option<String> {
