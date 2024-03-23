@@ -4,13 +4,13 @@ use cursive::views::{Checkbox, Dialog};
 use cursive::{event::Key, views::ListView};
 
 use crate::core::trailers;
-use crate::core::Coauthors;
 use crate::core::Mob;
+use crate::core::Team;
 use crate::git_mob::output;
 use crate::git_mob::MainResult;
 use crate::git_mob::Output;
 
-pub fn run<F>(coauthors: Coauthors, mob: &Mob, write: F)
+pub fn run<F>(coauthors: Team, mob: &Mob, write: F)
 where
     F: Fn(Output) -> MainResult + 'static,
 {
@@ -27,7 +27,7 @@ where
     siv.run()
 }
 
-fn dialog<F>(view: ScrollView<ListView>, coauthors: Coauthors, write: F) -> Dialog
+fn dialog<F>(view: ScrollView<ListView>, coauthors: Team, write: F) -> Dialog
 where
     F: Fn(Output) -> MainResult + 'static,
 {
@@ -42,7 +42,7 @@ where
         })
 }
 
-fn scroll_view(coauthors: &Coauthors, mob: &Mob) -> ScrollView<ListView> {
+fn scroll_view(coauthors: &Team, mob: &Mob) -> ScrollView<ListView> {
     ScrollView::new(
         coauthors
             .iter()

@@ -26,7 +26,7 @@ pub fn parse_args() -> Args {
     Args::parse()
 }
 
-pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
+pub fn process(coauthors: &Team, mob: &Mob, args: &Args) -> Output {
     let initials = Mob::from_iter(args.initials.iter().cloned());
 
     if initials.is_empty() {

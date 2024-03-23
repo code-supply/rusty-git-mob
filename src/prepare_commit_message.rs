@@ -17,7 +17,7 @@ pub fn parse_args() -> Args {
 }
 
 pub fn prepare_commit_message(
-    coauthors: &Coauthors,
+    coauthors: &Team,
     mob: &Mob,
     message: String,
     branch_name: Option<&str>,

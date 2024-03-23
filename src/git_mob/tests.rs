@@ -102,8 +102,8 @@ fn mob_is_sorted() {
     assert_eq!(actual, expected)
 }
 
-fn coauthors(initials: &Mob) -> Coauthors {
-    Coauthors::from([
+fn coauthors(initials: &Mob) -> Team {
+    Team::from([
         (
             "ab".to_owned(),
             Coauthor {

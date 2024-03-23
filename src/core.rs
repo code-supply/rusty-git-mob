@@ -8,7 +8,7 @@ use std::path::PathBuf;
 use serde::Deserialize;
 
 pub type Mob = BTreeSet<String>;
-pub type Coauthors = BTreeMap<String, Coauthor>;
+pub type Team = BTreeMap<String, Coauthor>;
 
 #[derive(Clone, Deserialize, Debug, PartialEq)]
 pub struct Coauthor {
@@ -21,7 +21,7 @@ pub struct Output {
     pub message: String,
 }
 
-pub fn trailers(coauthors: &Coauthors, initials: &Mob) -> String {
+pub fn trailers(coauthors: &Team, initials: &Mob) -> String {
     initials
         .iter()
         .fold(String::new(), |acc, initial| match coauthors.get(initial) {
