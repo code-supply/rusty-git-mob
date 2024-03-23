@@ -1,6 +1,6 @@
 use super::*;
 use crate::core::Coauthor;
-use crate::git_mob::{self, Output};
+use crate::git_mob::Output;
 
 #[test]
 fn empty_input_returns_empty_output() {
@@ -13,7 +13,7 @@ fn empty_input_returns_empty_output() {
                 ..Default::default()
             }
         ),
-        git_mob::Output::default()
+        Output::default()
     );
 }
 
