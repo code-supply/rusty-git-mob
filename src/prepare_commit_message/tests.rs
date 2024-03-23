@@ -6,7 +6,7 @@ fn empty_coauthors_produces_empty_message() {
         prepare_commit_message(
             &Coauthors::default(),
             &Mob::default(),
-            "".to_string(),
+            "".to_owned(),
             Some("main")
         ),
         Output::default()
@@ -19,11 +19,11 @@ fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
         prepare_commit_message(
             &Coauthors::default(),
             &Mob::default(),
-            "# original comment".to_string(),
+            "# original comment".to_owned(),
             Some("main")
         ),
         Output {
-            message: "# original comment".to_string()
+            message: "# original comment".to_owned()
         }
     );
 }
@@ -32,9 +32,9 @@ fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
 fn adds_coauthors_to_message_without_comments() {
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
-            &Mob::from(["ab".to_string(), "fb".to_string()]),
-            "Hello, World!".to_string(),
+            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
+            "Hello, World!".to_owned(),
             Some("main")
         ),
         Output {
@@ -43,7 +43,7 @@ fn adds_coauthors_to_message_without_comments() {
 Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>
 "#
-            .to_string()
+            .to_owned()
         }
     )
 }
@@ -52,14 +52,14 @@ Co-authored-by: Fred Brookes <fred@example.com>
 fn adds_coauthors_to_existing_message() {
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
-            &Mob::from(["ab".to_string(), "fb".to_string()]),
+            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
             r#"Hello, World!
 
 # some comments
 # go here
 "#
-            .to_string(),
+            .to_owned(),
             Some("main")
         ),
         Output {
@@ -71,7 +71,7 @@ Co-authored-by: Fred Brookes <fred@example.com>
 # some comments
 # go here
 "#
-            .to_string()
+            .to_owned()
         }
     )
 }
@@ -80,12 +80,12 @@ Co-authored-by: Fred Brookes <fred@example.com>
 fn adds_newline_and_coauthors_to_a_comment_only_message() {
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
-            &Mob::from(["ab".to_string(), "fb".to_string()]),
+            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
             r#"# some comments
 # go here
 "#
-            .to_string(),
+            .to_owned(),
             Some("main")
         ),
         Output {
@@ -96,7 +96,7 @@ Co-authored-by: Fred Brookes <fred@example.com>
 # some comments
 # go here
 "#
-            .to_string()
+            .to_owned()
         }
     )
 }
@@ -110,11 +110,11 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
 # some comments
 # go here
 "#
-    .to_string();
+    .to_owned();
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
-            &Mob::from(["ab".to_string(), "fb".to_string()]),
+            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
             Some("main")
         ),
@@ -124,12 +124,12 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
 
 #[test]
 fn does_not_change_commits_during_a_rebase() {
-    let message = "I'm a commit without trailers".to_string();
+    let message = "I'm a commit without trailers".to_owned();
 
     assert_eq!(
         prepare_commit_message(
-            &coauthors(&Mob::from(["ab".to_string(), "fb".to_string()])),
-            &Mob::from(["ab".to_string(), "fb".to_string()]),
+            &coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
             None
         ),
@@ -140,17 +140,17 @@ fn does_not_change_commits_during_a_rebase() {
 fn coauthors(initials: &Mob) -> Coauthors {
     Coauthors::from([
         (
-            "ab".to_string(),
+            "ab".to_owned(),
             Coauthor {
-                name: "Andrew Bruce".to_string(),
-                email: "me@andrewbruce.net".to_string(),
+                name: "Andrew Bruce".to_owned(),
+                email: "me@andrewbruce.net".to_owned(),
             },
         ),
         (
-            "fb".to_string(),
+            "fb".to_owned(),
             Coauthor {
-                name: "Fred Brookes".to_string(),
-                email: "fred@example.com".to_string(),
+                name: "Fred Brookes".to_owned(),
+                email: "fred@example.com".to_owned(),
             },
         ),
     ])

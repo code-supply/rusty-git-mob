@@ -47,7 +47,7 @@ fn scroll_view(coauthors: &Coauthors, mob: &Mob) -> ScrollView<ListView> {
         coauthors
             .iter()
             .fold(ListView::new(), |list_view, (initials, coauthor)| {
-                list_view.child(&coauthor.name, checkbox(mob, initials.to_string()))
+                list_view.child(&coauthor.name, checkbox(mob, initials.to_owned()))
             }),
     )
 }

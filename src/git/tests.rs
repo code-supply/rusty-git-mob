@@ -16,7 +16,7 @@ fn head_of_one_commit_is_a_short_string() {
         name = "Anne Other"
         email = "anne@example.com
         "#;
-    std::fs::write(dir.to_string() + "/.git/config", config).expect("couldn't write config");
+    std::fs::write(dir.to_owned() + "/.git/config", config).expect("couldn't write config");
     let sig = repo.signature().expect("couldn't make signature");
     let tree_id = {
         let mut index = repo.index().expect("couldn't get index");
@@ -29,7 +29,7 @@ fn head_of_one_commit_is_a_short_string() {
         .expect("couldn't commit");
 
     assert!(
-        HashSet::from([Some("master".to_string()), Some("main".to_string())]).contains(&head(dir))
+        HashSet::from([Some("master".to_owned()), Some("main".to_owned())]).contains(&head(dir))
     );
 }
 

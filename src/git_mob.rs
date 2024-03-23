@@ -38,9 +38,9 @@ pub fn process(coauthors: &Coauthors, mob: &Mob, args: &Args) -> Output {
 
 pub fn output(formatted_trailers: &str, mob: &Mob) -> Output {
     Output {
-        message: formatted_trailers.to_string(),
+        message: formatted_trailers.to_owned(),
         template: if formatted_trailers.is_empty() {
-            "".to_string()
+            "".to_owned()
         } else {
             format!("\n\n{}", formatted_trailers)
         },
