@@ -4,8 +4,8 @@ use super::*;
 fn empty_coauthors_produces_empty_message() {
     assert_eq!(
         prepare_commit_message(
-            &Org::from([("cool gang".to_owned(), Team::default(),)]),
-            &Mob::default(),
+            &Org::from([("cool gang".to_owned(), Team::default())]),
+            &InputMob::default(),
             "".to_owned(),
             Some("main")
         ),
@@ -17,8 +17,8 @@ fn empty_coauthors_produces_empty_message() {
 fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
     assert_eq!(
         prepare_commit_message(
-            &Org::from([("cool gang".to_owned(), Team::default(),)]),
-            &Mob::default(),
+            &Org::from([("cool gang".to_owned(), Team::default())]),
+            &InputMob::default(),
             "# original comment".to_owned(),
             Some("main")
         ),
@@ -34,9 +34,9 @@ fn adds_coauthors_to_message_without_comments() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
             )]),
-            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
+            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             "Hello, World!".to_owned(),
             Some("main")
         ),
@@ -57,9 +57,9 @@ fn adds_coauthors_to_existing_message() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
             )]),
-            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
+            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             r#"Hello, World!
 
 # some comments
@@ -88,9 +88,9 @@ fn adds_newline_and_coauthors_to_a_comment_only_message() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
             )]),
-            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
+            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             r#"# some comments
 # go here
 "#
@@ -124,9 +124,9 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()])),
+                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
             )]),
-            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
+            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
             Some("main")
         ),
@@ -142,9 +142,9 @@ fn does_not_change_commits_during_a_rebase() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&Mob::from(["ab".to_owned(), "fb".to_owned()]))
+                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()]))
             )]),
-            &Mob::from(["ab".to_owned(), "fb".to_owned()]),
+            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
             None
         ),
@@ -152,18 +152,18 @@ fn does_not_change_commits_during_a_rebase() {
     )
 }
 
-fn coauthors(initials: &Mob) -> Team {
+fn coauthors(initials: &InputMob) -> Team {
     Team::from([
         (
             "ab".to_owned(),
-            Coauthor {
+            Author {
                 name: "Andrew Bruce".to_owned(),
                 email: "me@andrewbruce.net".to_owned(),
             },
         ),
         (
             "fb".to_owned(),
-            Coauthor {
+            Author {
                 name: "Fred Brookes".to_owned(),
                 email: "fred@example.com".to_owned(),
             },

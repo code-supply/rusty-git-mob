@@ -1,10 +1,9 @@
 use super::*;
-use crate::core::Coauthor;
-
-use std::collections::HashSet;
+use crate::core::Author;
+use crate::core::Mob;
 
 #[test]
-fn can_get_authors_of_commit_with_trailers() {
+fn can_get_mob_from_commit_with_trailers() {
     let dir = "tmp/authors-with-trailers";
     let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
     let oid = commit(
@@ -15,32 +14,32 @@ co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
     );
 
     assert_eq!(
-        Ok(HashSet::from([
-            Coauthor {
+        Ok(Mob::from([
+            Author {
                 name: "Anne Other".to_owned(),
                 email: "anne@example.com".to_owned()
             },
-            Coauthor {
+            Author {
                 name: "Andrew Bruce".to_owned(),
                 email: "me@andrewbruce.net".to_owned()
             }
         ])),
-        commit_authors(dir, oid)
+        commit_mob(dir, oid)
     );
 }
 
 #[test]
-fn can_get_author_of_commit_without_trailers() {
+fn can_get_mob_from_commit_without_trailers() {
     let dir = "tmp/authors-no-trailers";
     let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
     let oid = commit(&repo, "Initial commit");
 
     assert_eq!(
-        Ok(HashSet::from([Coauthor {
+        Ok(Mob::from([Author {
             name: "Anne Other".to_owned(),
             email: "anne@example.com".to_owned()
         }])),
-        commit_authors(dir, oid)
+        commit_mob(dir, oid)
     );
 }
 

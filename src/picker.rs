@@ -5,14 +5,14 @@ use cursive::{event::Key, views::ListView};
 
 use crate::core;
 use crate::core::trailers;
-use crate::core::Mob;
+use crate::core::InputMob;
 use crate::core::Org;
 use crate::core::Team;
 use crate::git_mob::output;
 use crate::git_mob::MainResult;
 use crate::git_mob::Output;
 
-pub fn run<F>(org: Org, mob: &Mob, write: F)
+pub fn run<F>(org: Org, mob: &InputMob, write: F)
 where
     F: Fn(Output) -> MainResult + 'static,
 {
@@ -37,7 +37,7 @@ where
     Dialog::around(view)
         .title("Mob up with")
         .button("OK", move |s| {
-            s.with_user_data(|mob: &mut Mob| {
+            s.with_user_data(|mob: &mut InputMob| {
                 let ts = trailers(&coauthors, mob);
                 write(output(&ts, mob))
             });
@@ -45,7 +45,7 @@ where
         })
 }
 
-fn scroll_view(coauthors: &Team, mob: &Mob) -> ScrollView<ListView> {
+fn scroll_view(coauthors: &Team, mob: &InputMob) -> ScrollView<ListView> {
     ScrollView::new(
         coauthors
             .iter()
@@ -55,11 +55,11 @@ fn scroll_view(coauthors: &Team, mob: &Mob) -> ScrollView<ListView> {
     )
 }
 
-fn checkbox(mob: &Mob, initials: String) -> Checkbox {
+fn checkbox(mob: &InputMob, initials: String) -> Checkbox {
     Checkbox::new()
         .with_checked(mob.contains(&initials))
         .on_change(move |s, checked| {
-            s.with_user_data(|mob: &mut Mob| {
+            s.with_user_data(|mob: &mut InputMob| {
                 if checked {
                     mob.insert(initials.clone());
                 } else {

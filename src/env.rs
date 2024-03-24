@@ -6,11 +6,11 @@ use std::path::PathBuf;
 
 use serde::Deserialize;
 
-use crate::core::{open_read_write, Mob, Org};
+use crate::core::{open_read_write, InputMob, Org};
 
 pub struct Env {
     pub mob_file: File,
-    pub mob: Mob,
+    pub mob: InputMob,
     pub template_file: File,
     pub org: Org,
 }
@@ -34,8 +34,8 @@ pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
 
     let mob: serde_json::Result<Vec<String>> = serde_json::from_reader(BufReader::new(&mob_file));
     let mob_set = match mob {
-        Ok(mob) => Mob::from_iter(mob.iter().cloned()),
-        Err(_) => Mob::default(),
+        Ok(mob) => InputMob::from_iter(mob.iter().cloned()),
+        Err(_) => InputMob::default(),
     };
 
     Ok(Env {

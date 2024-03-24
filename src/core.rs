@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs::{File, OpenOptions};
 use std::io;
@@ -7,12 +8,13 @@ use std::path::PathBuf;
 
 use serde::Deserialize;
 
-pub type Mob = BTreeSet<String>;
+pub type InputMob = BTreeSet<String>;
+pub type Mob = HashSet<Author>;
 pub type Org = BTreeMap<String, Team>;
-pub type Team = BTreeMap<String, Coauthor>;
+pub type Team = BTreeMap<String, Author>;
 
 #[derive(Clone, Deserialize, Debug, Eq, PartialEq, Hash)]
-pub struct Coauthor {
+pub struct Author {
     pub name: String,
     pub email: String,
 }
@@ -22,10 +24,10 @@ pub struct Output {
     pub message: String,
 }
 
-pub fn trailers(coauthors: &Team, initials: &Mob) -> String {
+pub fn trailers(team: &Team, initials: &InputMob) -> String {
     initials
         .iter()
-        .fold(String::new(), |acc, initial| match coauthors.get(initial) {
+        .fold(String::new(), |acc, initial| match team.get(initial) {
             Some(coauthor) => {
                 format!(
                     "{}Co-authored-by: {} <{}>\n",

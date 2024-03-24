@@ -19,24 +19,24 @@ pub struct Args {
 pub struct Output {
     pub message: String,
     pub template: String,
-    pub mob: Mob,
+    pub mob: InputMob,
 }
 
 pub fn parse_args() -> Args {
     Args::parse()
 }
 
-pub fn process(coauthors: &Team, mob: &Mob, args: &Args) -> Output {
-    let initials = Mob::from_iter(args.initials.iter().cloned());
+pub fn process(team: &Team, mob: &InputMob, args: &Args) -> Output {
+    let initials = InputMob::from_iter(args.initials.iter().cloned());
 
     if initials.is_empty() {
-        output(&trailers(coauthors, mob), mob)
+        output(&trailers(team, mob), mob)
     } else {
-        output(&trailers(coauthors, &initials), &initials)
+        output(&trailers(team, &initials), &initials)
     }
 }
 
-pub fn output(formatted_trailers: &str, mob: &Mob) -> Output {
+pub fn output(formatted_trailers: &str, mob: &InputMob) -> Output {
     Output {
         message: formatted_trailers.to_owned(),
         template: if formatted_trailers.is_empty() {

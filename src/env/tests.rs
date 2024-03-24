@@ -16,7 +16,7 @@ fn git_mob_file_gets_initialised_when_non_existent() {
 
     let git_mob_env = env::load().unwrap();
 
-    assert_eq!(Mob::default(), git_mob_env.mob);
+    assert_eq!(InputMob::default(), git_mob_env.mob);
 
     let _ignore_errors = std::fs::remove_file("tmp/existent-coauthors");
     let _ignore_errors = std::fs::remove_file("tmp/existent-template");

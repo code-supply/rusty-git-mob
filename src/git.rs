@@ -1,11 +1,11 @@
-use crate::core::Coauthor;
+use crate::core::Author;
 use git2::Error;
 use git2::Oid;
 use git2::Repository;
 use regex::Regex;
 use std::collections::HashSet;
 
-pub fn commit_authors(dir: &str, oid: Oid) -> Result<HashSet<Coauthor>, Error> {
+pub fn commit_mob(dir: &str, oid: Oid) -> Result<HashSet<Author>, Error> {
     let repo = Repository::open(dir)?;
     let commit = repo.find_commit(oid)?;
 
@@ -14,7 +14,7 @@ pub fn commit_authors(dir: &str, oid: Oid) -> Result<HashSet<Coauthor>, Error> {
     let matches: Vec<_> = pattern.captures_iter(message).collect();
 
     let author = commit.author();
-    let mut authors = HashSet::from([Coauthor {
+    let mut authors = HashSet::from([Author {
         name: author.name().expect("couldn't get author name").to_owned(),
         email: author
             .email()
@@ -25,7 +25,7 @@ pub fn commit_authors(dir: &str, oid: Oid) -> Result<HashSet<Coauthor>, Error> {
     for capture in matches {
         let name = capture.get(1).expect("Couldn't get name");
         let email = capture.get(2).expect("Couldn't get email");
-        authors.insert(Coauthor {
+        authors.insert(Author {
             name: name.as_str().to_owned(),
             email: email.as_str().to_owned(),
         });
