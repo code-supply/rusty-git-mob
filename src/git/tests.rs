@@ -1,6 +1,7 @@
 use super::*;
 use crate::core::Author;
 use crate::core::Mob;
+use git2::Commit;
 use std::collections::HashSet;
 
 #[test]
@@ -12,17 +13,20 @@ fn can_get_mob_tally_from_multiple_commits() {
         &repo,
         "Initial commit
 co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
-    );
+    )
+    .unwrap();
     commit(
         &repo,
         "Another commit
 Co-authored-By: Maggie Hamilton <margaret@example.com>",
-    );
+    )
+    .unwrap();
     commit(
         &repo,
         "Yet another commit
 co-authored-by: Andrew Bruce <me@andrewbruce.net>",
-    );
+    )
+    .unwrap();
 
     let tally = mob_tally(dir).expect("Couldn't get tally");
     let anne_and_andrew = Mob::from([
@@ -60,7 +64,8 @@ fn can_get_mob_tally_from_commit_history_of_one() {
         &repo,
         "Initial commit
 co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
-    );
+    )
+    .unwrap();
 
     let tally = mob_tally(dir).expect("Couldn't get tally");
     let expected_mob = Mob::from([
@@ -87,7 +92,8 @@ fn can_get_mob_from_commit_with_trailers() {
         "Initial commit
 co-autHoreD-By: nobod <y-par>seable
 co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
-    );
+    )
+    .unwrap();
 
     assert_eq!(
         Ok(Mob::from([
@@ -108,7 +114,7 @@ co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
 fn can_get_mob_from_commit_without_trailers() {
     let dir = "tmp/authors-no-trailers";
     let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
-    let oid = initial_commit(&repo, "Initial commit");
+    let oid = initial_commit(&repo, "Initial commit").unwrap();
 
     assert_eq!(
         Ok(Mob::from([Author {
@@ -128,7 +134,7 @@ fn head_of_non_repository_is_none() {
 fn head_of_one_commit_is_a_short_string() {
     let dir = "tmp/my-fixture-2";
     let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
-    initial_commit(&repo, "Initial commit");
+    initial_commit(&repo, "Initial commit").unwrap();
 
     assert!(
         HashSet::from([Some("master".to_owned()), Some("main".to_owned())]).contains(&head(dir))
@@ -149,34 +155,26 @@ fn repo(dir: &str, config: &str) -> Repository {
     repo
 }
 
-fn initial_commit(repo: &Repository, message: &str) -> Oid {
-    let tree_id = {
-        let mut index = repo.index().expect("couldn't get index");
-        index.write_tree().expect("couldn't write tree")
-    };
-
-    let tree = repo.find_tree(tree_id).expect("couldn't find tree");
-
-    let sig = repo.signature().expect("couldn't make signature");
-    repo.commit(Some("HEAD"), &sig, &sig, message, &tree, &[])
-        .expect("couldn't commit")
+fn initial_commit(repo: &Repository, message: &str) -> Result<Oid, Error> {
+    do_commit(repo, message, &[])
 }
 
-fn commit(repo: &Repository, message: &str) -> Oid {
-    let head = repo.head().expect("Couldn't get HEAD");
-    let oid = head.target().expect("Couldn't get target");
-    let commit = repo.find_commit(oid).expect("Couldn't get latest commit");
+fn commit(repo: &Repository, message: &str) -> Result<Oid, Error> {
+    do_commit(
+        repo,
+        message,
+        &[&repo.find_commit(repo.head()?.target().expect("Couldn't get HEAD target"))?],
+    )
+}
 
-    let tree_id = {
-        let mut index = repo.index().expect("couldn't get index");
-        index.write_tree().expect("couldn't write tree")
-    };
+fn do_commit(repo: &Repository, message: &str, parents: &[&Commit<'_>]) -> Result<Oid, Error> {
+    let tree = repo.find_tree({
+        let mut index = repo.index()?;
+        index.write_tree()?
+    })?;
 
-    let tree = repo.find_tree(tree_id).expect("couldn't find tree");
-
-    let sig = repo.signature().expect("couldn't make signature");
-    repo.commit(Some("HEAD"), &sig, &sig, message, &tree, &[&commit])
-        .expect("couldn't commit")
+    let sig = repo.signature()?;
+    repo.commit(Some("HEAD"), &sig, &sig, message, &tree, parents)
 }
 
 fn committer_config(name: &str, email: &str) -> String {
