@@ -4,9 +4,26 @@ use git2::Error;
 use git2::Oid;
 use git2::Repository;
 use regex::Regex;
-use std::collections::HashSet;
+use std::collections::HashMap;
 
-pub fn commit_mob(dir: &str, oid: Oid) -> Result<HashSet<Author>, Error> {
+pub fn mob_tally(dir: &str) -> Result<HashMap<Mob, usize>, Error> {
+    let repo = Repository::open(dir)?;
+    let mut revwalk = repo.revwalk()?;
+    let _ = revwalk.push_head();
+    revwalk.set_sorting(git2::Sort::TIME)?;
+
+    let mut counts = HashMap::new();
+    for commit_id in revwalk {
+        let mob = commit_mob(dir, commit_id?)?;
+        match counts.get(&mob) {
+            Some(existing_count) => counts.insert(mob, existing_count + 1),
+            None => counts.insert(mob, 1),
+        };
+    }
+    Ok(counts)
+}
+
+pub fn commit_mob(dir: &str, oid: Oid) -> Result<Mob, Error> {
     let repo = Repository::open(dir)?;
     let commit = repo.find_commit(oid)?;
 
@@ -15,7 +32,7 @@ pub fn commit_mob(dir: &str, oid: Oid) -> Result<HashSet<Author>, Error> {
     let matches: Vec<_> = pattern.captures_iter(message).collect();
 
     let author = commit.author();
-    let mut authors = HashSet::from([Author {
+    let mut authors = Mob::from([Author {
         name: author.name().expect("couldn't get author name").to_owned(),
         email: author
             .email()
