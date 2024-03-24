@@ -1,4 +1,3 @@
-use std::collections::HashSet;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs::{File, OpenOptions};
 use std::io;
@@ -9,11 +8,11 @@ use std::path::PathBuf;
 use serde::Deserialize;
 
 pub type InputMob = BTreeSet<String>;
-pub type Mob = HashSet<Author>;
+pub type Mob = BTreeSet<Author>;
 pub type Org = BTreeMap<String, Team>;
 pub type Team = BTreeMap<String, Author>;
 
-#[derive(Clone, Deserialize, Debug, Eq, PartialEq, Hash)]
+#[derive(Clone, Deserialize, Debug, Eq, Ord, PartialOrd, PartialEq, Hash)]
 pub struct Author {
     pub name: String,
     pub email: String,

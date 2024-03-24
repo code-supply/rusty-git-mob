@@ -1,4 +1,5 @@
 use crate::core::Author;
+use crate::core::Mob;
 use git2::Error;
 use git2::Oid;
 use git2::Repository;
