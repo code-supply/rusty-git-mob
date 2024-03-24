@@ -1,12 +1,26 @@
 use crate::core::Author;
 use crate::core::Mob;
-use git2::Error;
 use git2::Oid;
 use git2::Repository;
 use regex::Regex;
 use std::collections::HashMap;
 
-pub fn mob_tally(dir: &str) -> Result<HashMap<Mob, usize>, Error> {
+type Result<T> = std::result::Result<T, Error>;
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Error {
+    message: String,
+}
+
+impl From<git2::Error> for Error {
+    fn from(e: git2::Error) -> Self {
+        Error {
+            message: e.message().to_owned(),
+        }
+    }
+}
+
+pub fn mob_tally(dir: &str) -> Result<HashMap<Mob, usize>> {
     let repo = Repository::open(dir)?;
     let mut revwalk = repo.revwalk()?;
     let _ = revwalk.push_head();
@@ -23,7 +37,7 @@ pub fn mob_tally(dir: &str) -> Result<HashMap<Mob, usize>, Error> {
     Ok(counts)
 }
 
-pub fn commit_mob(dir: &str, oid: Oid) -> Result<Mob, Error> {
+pub fn commit_mob(dir: &str, oid: Oid) -> Result<Mob> {
     let repo = Repository::open(dir)?;
     let commit = repo.find_commit(oid)?;
 

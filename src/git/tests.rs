@@ -155,11 +155,11 @@ fn repo(dir: &str, config: &str) -> Repository {
     repo
 }
 
-fn initial_commit(repo: &Repository, message: &str) -> Result<Oid, Error> {
+fn initial_commit(repo: &Repository, message: &str) -> Result<Oid> {
     do_commit(repo, message, &[])
 }
 
-fn commit(repo: &Repository, message: &str) -> Result<Oid, Error> {
+fn commit(repo: &Repository, message: &str) -> Result<Oid> {
     do_commit(
         repo,
         message,
@@ -167,14 +167,14 @@ fn commit(repo: &Repository, message: &str) -> Result<Oid, Error> {
     )
 }
 
-fn do_commit(repo: &Repository, message: &str, parents: &[&Commit<'_>]) -> Result<Oid, Error> {
+fn do_commit(repo: &Repository, message: &str, parents: &[&Commit<'_>]) -> Result<Oid> {
     let tree = repo.find_tree({
         let mut index = repo.index()?;
         index.write_tree()?
     })?;
 
     let sig = repo.signature()?;
-    repo.commit(Some("HEAD"), &sig, &sig, message, &tree, parents)
+    Ok(repo.commit(Some("HEAD"), &sig, &sig, message, &tree, parents)?)
 }
 
 fn committer_config(name: &str, email: &str) -> String {
