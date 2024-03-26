@@ -3,9 +3,9 @@ use crate::core::Mob;
 use git2::Oid;
 use git2::Repository;
 use regex::Regex;
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
-pub type Tallies = BTreeMap<Mob, usize>;
+pub type Tallies = HashMap<Mob, usize>;
 
 pub type Result<T> = std::result::Result<T, Error>;
 

@@ -30,8 +30,8 @@ fn can_show_mob_tallies_for_mobs_and_soloists() {
     });
     assert_eq!(
         output.message,
-        "Andrew Bruce (solo): 25\n\
-         Andrew Bruce, Neil Young: 11\n"
+        "11: Andrew Bruce <me@andrewbruce.net>, Neil Young <neil@example.com>\n\
+         25: Andrew Bruce <me@andrewbruce.net> (solo)\n"
     );
 }
 
@@ -48,5 +48,8 @@ fn can_show_mob_tallies_for_soloists() {
         );
         Ok(tallies)
     });
-    assert_eq!(output.message, "Andrew Bruce (solo): 25\n");
+    assert_eq!(
+        output.message,
+        "25: Andrew Bruce <me@andrewbruce.net> (solo)\n"
+    );
 }

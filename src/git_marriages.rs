@@ -1,5 +1,7 @@
+use crate::core::Mob;
 use crate::git;
 use crate::git::Tallies;
+use std::collections::BTreeMap;
 
 pub type MainResult = Result<(), Box<dyn std::error::Error>>;
 
@@ -12,20 +14,27 @@ pub fn process<F>(tallies: F) -> Output
 where
     F: Fn() -> git::Result<Tallies>,
 {
-    let message = tallies()
-        .unwrap()
+    let mut results: BTreeMap<usize, Mob> = BTreeMap::new();
+    for (mob, count) in tallies().unwrap() {
+        results.insert(count, mob);
+    }
+
+    let message = results
         .iter()
-        .fold("".to_owned(), |acc, (mob, count)| match mob.len() {
+        .fold("".to_owned(), |acc, (count, mob)| match mob.len() {
             1 => {
                 let soloist = mob.first().unwrap();
-                acc + &format!("{} (solo): {}\n", &soloist.name, count)
+                acc + &format!("{}: {} <{}> (solo)\n", count, &soloist.name, &soloist.email)
             }
             _ => {
                 let mut authors = Vec::from_iter(mob);
                 authors.sort();
-                let names: Vec<String> = authors.iter().map(|a| a.name.clone()).collect();
+                let names: Vec<String> = authors
+                    .iter()
+                    .map(|a| format!("{} <{}>", a.name, a.email))
+                    .collect();
                 let joined: String = names.join(", ");
-                acc + &format!("{}: {}\n", joined, count)
+                acc + &format!("{}: {}\n", count, joined)
             }
         });
 
