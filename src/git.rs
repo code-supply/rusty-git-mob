@@ -5,7 +5,7 @@ use git2::Repository;
 use regex::Regex;
 use std::collections::HashMap;
 
-type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Error {
