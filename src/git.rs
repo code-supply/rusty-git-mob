@@ -3,7 +3,9 @@ use crate::core::Mob;
 use git2::Oid;
 use git2::Repository;
 use regex::Regex;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
+
+pub type Tallies = BTreeMap<Mob, usize>;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -20,13 +22,13 @@ impl From<git2::Error> for Error {
     }
 }
 
-pub fn mob_tally(dir: &str) -> Result<HashMap<Mob, usize>> {
+pub fn mob_tally(dir: &str) -> Result<Tallies> {
     let repo = Repository::open(dir)?;
     let mut revwalk = repo.revwalk()?;
     let _ = revwalk.push_head();
     revwalk.set_sorting(git2::Sort::TIME)?;
 
-    let mut counts = HashMap::new();
+    let mut counts = Tallies::new();
     for commit_id in revwalk {
         let mob = commit_mob(dir, commit_id?)?;
         match counts.get(&mob) {
@@ -41,7 +43,7 @@ pub fn commit_mob(dir: &str, oid: Oid) -> Result<Mob> {
     let repo = Repository::open(dir)?;
     let commit = repo.find_commit(oid)?;
 
-    let pattern = Regex::new(r"(?i)co-authored-by: (.+) <(.+)>$").unwrap();
+    let pattern = Regex::new(r"(?i)co-authored-by: (.+) <(.+)>").unwrap();
     let message = commit.message().expect("Couldn't get message");
     let matches: Vec<_> = pattern.captures_iter(message).collect();
 

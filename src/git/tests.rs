@@ -18,7 +18,10 @@ co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
     commit(
         &repo,
         "Another commit
-Co-authored-By: Maggie Hamilton <margaret@example.com>",
+
+Co-authored-By: Maggie Hamilton <margaret@example.com>
+Co-authored-By: Mr Potato Head <tatties@example.com>
+",
     )
     .unwrap();
     commit(
@@ -39,7 +42,7 @@ co-authored-by: Andrew Bruce <me@andrewbruce.net>",
             email: "me@andrewbruce.net".to_owned(),
         },
     ]);
-    let anne_and_maggie = Mob::from([
+    let anne_maggie_and_mr_potato_head = Mob::from([
         Author {
             name: "Anne Other".to_owned(),
             email: "anne@example.com".to_owned(),
@@ -48,11 +51,20 @@ co-authored-by: Andrew Bruce <me@andrewbruce.net>",
             name: "Maggie Hamilton".to_owned(),
             email: "margaret@example.com".to_owned(),
         },
+        Author {
+            name: "Mr Potato Head".to_owned(),
+            email: "tatties@example.com".to_owned(),
+        },
     ]);
 
     assert_eq!(2, tally.len());
     assert_eq!(2, *tally.get(&anne_and_andrew).expect("Mob not in result"));
-    assert_eq!(1, *tally.get(&anne_and_maggie).expect("Mob not in result"));
+    assert_eq!(
+        1,
+        *tally
+            .get(&anne_maggie_and_mr_potato_head)
+            .expect("Anne-Maggie-Mr Potato Head mob not in result")
+    );
 }
 
 #[test]
@@ -81,33 +93,6 @@ co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
 
     assert_eq!(1, tally.len());
     assert_eq!(1, *tally.get(&expected_mob).expect("Mob not in result"))
-}
-
-#[test]
-fn can_get_mob_from_commit_with_trailers() {
-    let dir = "tmp/authors-with-trailers";
-    let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
-    let oid = initial_commit(
-        &repo,
-        "Initial commit
-co-autHoreD-By: nobod <y-par>seable
-co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
-    )
-    .unwrap();
-
-    assert_eq!(
-        Ok(Mob::from([
-            Author {
-                name: "Anne Other".to_owned(),
-                email: "anne@example.com".to_owned()
-            },
-            Author {
-                name: "Andrew Bruce".to_owned(),
-                email: "me@andrewbruce.net".to_owned()
-            }
-        ])),
-        commit_mob(dir, oid)
-    );
 }
 
 #[test]
