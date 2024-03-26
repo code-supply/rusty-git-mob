@@ -19,26 +19,25 @@ where
         results.insert(count, mob);
     }
 
-    let message = results
-        .iter()
-        .fold("".to_owned(), |acc, (count, mob)| match mob.len() {
-            1 => {
-                let soloist = mob.first().unwrap();
-                acc + &format!("{}: {} <{}> (solo)\n", count, &soloist.name, &soloist.email)
-            }
-            _ => {
-                let mut authors = Vec::from_iter(mob);
-                authors.sort();
-                let names: Vec<String> = authors
-                    .iter()
-                    .map(|a| format!("{} <{}>", a.name, a.email))
-                    .collect();
-                let joined: String = names.join(", ");
-                acc + &format!("{}: {}\n", count, joined)
-            }
-        });
+    let message = results.iter().fold("".to_owned(), |acc, (count, mob)| {
+        let mut authors = Vec::from_iter(mob);
+        authors.sort();
+        let authors_formatted: String = format_authors(authors).join(", ");
+        acc + &format!("{}: {}{}\n", count, authors_formatted, solo_indicator(mob))
+    });
 
     Output { message }
+}
+
+fn format_authors(authors: Vec<&crate::core::Author>) -> Vec<String> {
+    authors.iter().map(|a| a.to_string()).collect()
+}
+
+fn solo_indicator(mob: &std::collections::BTreeSet<crate::core::Author>) -> &str {
+    match mob.len() {
+        1 => " (solo)",
+        _ => "",
+    }
 }
 
 #[cfg(test)]
