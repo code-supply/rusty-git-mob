@@ -1,7 +1,6 @@
 use crate::core::Mob;
 use crate::git;
 use crate::git::Tallies;
-use std::collections::BTreeMap;
 
 pub type MainResult = Result<(), Box<dyn std::error::Error>>;
 
@@ -14,10 +13,11 @@ pub fn process<F>(tallies: F) -> Output
 where
     F: Fn() -> git::Result<Tallies>,
 {
-    let mut results: BTreeMap<usize, Mob> = BTreeMap::new();
+    let mut results: Vec<(usize, Mob)> = Vec::new();
     for (mob, count) in tallies().unwrap() {
-        results.insert(count, mob);
+        results.push((count, mob));
     }
+    results.sort();
 
     let message = results.iter().fold("".to_owned(), |acc, (count, mob)| {
         let mut authors = Vec::from_iter(mob);

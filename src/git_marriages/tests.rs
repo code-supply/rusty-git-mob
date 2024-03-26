@@ -26,12 +26,20 @@ fn can_show_mob_tallies_for_mobs_and_soloists() {
             }]),
             25,
         );
+        tallies.insert(
+            Mob::from([Author {
+                name: "Billy Talbot".to_owned(),
+                email: "billy@example.com".to_owned(),
+            }]),
+            25,
+        );
         Ok(tallies)
     });
     assert_eq!(
         output.message,
         "11: Andrew Bruce <me@andrewbruce.net>, Neil Young <neil@example.com>\n\
-         25: Andrew Bruce <me@andrewbruce.net> (solo)\n"
+         25: Andrew Bruce <me@andrewbruce.net> (solo)\n\
+         25: Billy Talbot <billy@example.com> (solo)\n"
     );
 }
 
