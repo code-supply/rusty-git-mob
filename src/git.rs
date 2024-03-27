@@ -11,7 +11,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Error {
-    message: String,
+    pub message: String,
 }
 
 impl From<git2::Error> for Error {

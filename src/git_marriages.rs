@@ -2,19 +2,32 @@ use crate::core::Mob;
 use crate::git;
 use crate::git::Tallies;
 
-pub type MainResult = Result<(), Box<dyn std::error::Error>>;
+pub type MainResult = std::result::Result<(), Error>;
+
+type Result<T> = std::result::Result<T, Error>;
+
+impl From<git::Error> for Error {
+    fn from(e: git::Error) -> Self {
+        Error { message: e.message }
+    }
+}
+
+#[derive(Debug, PartialEq, Default)]
+pub struct Error {
+    pub message: String,
+}
 
 #[derive(Debug, PartialEq, Default)]
 pub struct Output {
     pub message: String,
 }
 
-pub fn process<F>(tallies: F) -> Output
+pub fn process<F>(tallies: F) -> Result<Output>
 where
     F: Fn() -> git::Result<Tallies>,
 {
     let mut results: Vec<(usize, Mob)> = Vec::new();
-    for (mob, count) in tallies().unwrap() {
+    for (mob, count) in tallies()? {
         results.push((count, mob));
     }
     results.sort();
@@ -26,7 +39,7 @@ where
         acc + &format!("{}: {}{}\n", count, authors_formatted, solo_indicator(mob))
     });
 
-    Output { message }
+    Ok(Output { message })
 }
 
 fn format_authors(authors: Vec<&crate::core::Author>) -> Vec<String> {

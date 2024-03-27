@@ -3,7 +3,7 @@ use crate::core::Author;
 use crate::core::Mob;
 
 #[test]
-fn can_show_mob_tallies_for_mobs_and_soloists() {
+fn can_show_mob_tallies_for_mobs_and_soloists() -> MainResult {
     let output = process(|| {
         let mut tallies = Tallies::new();
         tallies.insert(
@@ -36,28 +36,21 @@ fn can_show_mob_tallies_for_mobs_and_soloists() {
         Ok(tallies)
     });
     assert_eq!(
-        output.message,
+        output?.message,
         "11: Andrew Bruce <me@andrewbruce.net>, Neil Young <neil@example.com>\n\
          25: Andrew Bruce <me@andrewbruce.net> (solo)\n\
          25: Billy Talbot <billy@example.com> (solo)\n"
     );
+    Ok(())
 }
 
 #[test]
-fn can_show_mob_tallies_for_soloists() {
+fn copes_with_error_getting_tallies() -> MainResult {
     let output = process(|| {
-        let mut tallies = Tallies::new();
-        tallies.insert(
-            Mob::from([Author {
-                name: "Andrew Bruce".to_owned(),
-                email: "me@andrewbruce.net".to_owned(),
-            }]),
-            25,
-        );
-        Ok(tallies)
+        Err(git::Error {
+            message: "bad stuff happened".to_owned(),
+        })
     });
-    assert_eq!(
-        output.message,
-        "25: Andrew Bruce <me@andrewbruce.net> (solo)\n"
-    );
+    assert!(output.is_err());
+    Ok(())
 }
