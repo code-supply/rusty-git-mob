@@ -1,9 +1,8 @@
-use std::io::Read;
-
 use rusty_git_mob::core::*;
 use rusty_git_mob::env;
 use rusty_git_mob::git;
 use rusty_git_mob::prepare_commit_message::*;
+use std::io::Read;
 
 fn main() -> MainResult {
     let args = parse_args();

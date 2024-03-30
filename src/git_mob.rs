@@ -1,10 +1,6 @@
-use std::fs::File;
-
-use clap::Parser;
-
 use crate::core::*;
-
-pub type MainResult = Result<(), Box<dyn std::error::Error>>;
+use clap::Parser;
+use std::fs::File;
 
 #[derive(Parser, Debug, Default)]
 pub struct Args {

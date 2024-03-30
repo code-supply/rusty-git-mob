@@ -8,6 +8,8 @@ use std::path::PathBuf;
 
 use serde::Deserialize;
 
+pub type MainResult = Result<(), Box<dyn std::error::Error>>;
+
 pub type InputMob = BTreeSet<String>;
 pub type Mob = BTreeSet<Author>;
 pub type Org = BTreeMap<String, Team>;

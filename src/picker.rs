@@ -6,10 +6,10 @@ use cursive::{event::Key, views::ListView};
 use crate::core;
 use crate::core::trailers;
 use crate::core::InputMob;
+use crate::core::MainResult;
 use crate::core::Org;
 use crate::core::Team;
 use crate::git_mob::output;
-use crate::git_mob::MainResult;
 use crate::git_mob::Output;
 
 pub fn run<F>(org: Org, mob: &InputMob, write: F)
