@@ -5,7 +5,7 @@ use git2::Commit;
 use std::collections::HashSet;
 
 #[test]
-fn can_get_mob_tally_from_multiple_commits() {
+fn can_get_mob_tally_from_multiple_commits() -> Result<()> {
     let dir = "tmp/mob-tally-multiple";
     let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
 
@@ -13,8 +13,7 @@ fn can_get_mob_tally_from_multiple_commits() {
         &repo,
         "Initial commit
 co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
-    )
-    .unwrap();
+    )?;
     commit(
         &repo,
         "Another commit
@@ -22,14 +21,12 @@ co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
 Co-authored-By: Maggie Hamilton <margaret@example.com>
 Co-authored-By: Mr Potato Head <tatties@example.com>
 ",
-    )
-    .unwrap();
+    )?;
     commit(
         &repo,
         "Yet another commit
 co-authored-by: Andrew Bruce <me@andrewbruce.net>",
-    )
-    .unwrap();
+    )?;
 
     let tally = mob_tally(dir).expect("Couldn't get tally");
     let anne_and_andrew = Mob::from([
@@ -58,17 +55,13 @@ co-authored-by: Andrew Bruce <me@andrewbruce.net>",
     ]);
 
     assert_eq!(2, tally.len());
-    assert_eq!(2, *tally.get(&anne_and_andrew).expect("Mob not in result"));
-    assert_eq!(
-        1,
-        *tally
-            .get(&anne_maggie_and_mr_potato_head)
-            .expect("Anne-Maggie-Mr Potato Head mob not in result")
-    );
+    assert_eq!(Some(&2usize), tally.get(&anne_and_andrew));
+    assert_eq!(Some(&1usize), tally.get(&anne_maggie_and_mr_potato_head));
+    Ok(())
 }
 
 #[test]
-fn can_get_mob_tally_from_commit_history_of_one() {
+fn can_get_mob_tally_from_commit_history_of_one() -> Result<()> {
     let dir = "tmp/mob-tally";
     let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
 
@@ -76,8 +69,7 @@ fn can_get_mob_tally_from_commit_history_of_one() {
         &repo,
         "Initial commit
 co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
-    )
-    .unwrap();
+    )?;
 
     let tally = mob_tally(dir).expect("Couldn't get tally");
     let expected_mob = Mob::from([
@@ -92,14 +84,16 @@ co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
     ]);
 
     assert_eq!(1, tally.len());
-    assert_eq!(1, *tally.get(&expected_mob).expect("Mob not in result"))
+    assert_eq!(1, *tally.get(&expected_mob).expect("Mob not in result"));
+
+    Ok(())
 }
 
 #[test]
-fn can_get_mob_from_commit_without_trailers() {
+fn can_get_mob_from_commit_without_trailers() -> Result<()> {
     let dir = "tmp/authors-no-trailers";
     let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
-    let oid = initial_commit(&repo, "Initial commit").unwrap();
+    let oid = initial_commit(&repo, "Initial commit")?;
 
     assert_eq!(
         Ok(Mob::from([Author {
@@ -108,6 +102,8 @@ fn can_get_mob_from_commit_without_trailers() {
         }])),
         commit_mob(dir, oid)
     );
+
+    Ok(())
 }
 
 #[test]
@@ -116,14 +112,16 @@ fn head_of_non_repository_is_none() {
 }
 
 #[test]
-fn head_of_one_commit_is_a_short_string() {
+fn head_of_one_commit_is_a_short_string() -> Result<()> {
     let dir = "tmp/my-fixture-2";
     let repo = repo(dir, &committer_config("Anne Other", "anne@example.com"));
-    initial_commit(&repo, "Initial commit").unwrap();
+    initial_commit(&repo, "Initial commit")?;
 
     assert!(
         HashSet::from([Some("master".to_owned()), Some("main".to_owned())]).contains(&head(dir))
     );
+
+    Ok(())
 }
 
 #[test]
