@@ -16,8 +16,8 @@ pub type Team = BTreeMap<String, Author>;
 #[derive(Clone, Default, Deserialize, Debug, Eq, Ord, PartialOrd, PartialEq, Hash)]
 pub struct Author {
     pub name: String,
-    pub email: String,
-    pub alternate_emails: BTreeSet<String>,
+    email: String,
+    alternate_emails: BTreeSet<String>,
 }
 
 impl Author {
