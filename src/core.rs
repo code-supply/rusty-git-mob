@@ -13,10 +13,21 @@ pub type Mob = BTreeSet<Author>;
 pub type Org = BTreeMap<String, Team>;
 pub type Team = BTreeMap<String, Author>;
 
-#[derive(Clone, Deserialize, Debug, Eq, Ord, PartialOrd, PartialEq, Hash)]
+#[derive(Clone, Default, Deserialize, Debug, Eq, Ord, PartialOrd, PartialEq, Hash)]
 pub struct Author {
     pub name: String,
     pub email: String,
+    pub alternate_emails: BTreeSet<String>,
+}
+
+impl Author {
+    pub fn new(name: String, email: String) -> Author {
+        Author {
+            name,
+            email,
+            ..Default::default()
+        }
+    }
 }
 
 impl fmt::Display for Author {

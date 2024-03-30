@@ -30,28 +30,19 @@ co-authored-by: Andrew Bruce <me@andrewbruce.net>",
 
     let tally = mob_tally(dir).expect("Couldn't get tally");
     let anne_and_andrew = Mob::from([
-        Author {
-            name: "Anne Other".to_owned(),
-            email: "anne@example.com".to_owned(),
-        },
-        Author {
-            name: "Andrew Bruce".to_owned(),
-            email: "me@andrewbruce.net".to_owned(),
-        },
+        Author::new("Anne Other".to_owned(), "anne@example.com".to_owned()),
+        Author::new("Andrew Bruce".to_owned(), "me@andrewbruce.net".to_owned()),
     ]);
     let anne_maggie_and_mr_potato_head = Mob::from([
-        Author {
-            name: "Anne Other".to_owned(),
-            email: "anne@example.com".to_owned(),
-        },
-        Author {
-            name: "Maggie Hamilton".to_owned(),
-            email: "margaret@example.com".to_owned(),
-        },
-        Author {
-            name: "Mr Potato Head".to_owned(),
-            email: "tatties@example.com".to_owned(),
-        },
+        Author::new("Anne Other".to_owned(), "anne@example.com".to_owned()),
+        Author::new(
+            "Maggie Hamilton".to_owned(),
+            "margaret@example.com".to_owned(),
+        ),
+        Author::new(
+            "Mr Potato Head".to_owned(),
+            "tatties@example.com".to_owned(),
+        ),
     ]);
 
     assert_eq!(2, tally.len());
@@ -73,14 +64,8 @@ co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
 
     let tally = mob_tally(dir).expect("Couldn't get tally");
     let expected_mob = Mob::from([
-        Author {
-            name: "Anne Other".to_owned(),
-            email: "anne@example.com".to_owned(),
-        },
-        Author {
-            name: "Andrew Bruce".to_owned(),
-            email: "me@andrewbruce.net".to_owned(),
-        },
+        Author::new("Anne Other".to_owned(), "anne@example.com".to_owned()),
+        Author::new("Andrew Bruce".to_owned(), "me@andrewbruce.net".to_owned()),
     ]);
 
     assert_eq!(1, tally.len());
@@ -96,10 +81,10 @@ fn can_get_mob_from_commit_without_trailers() -> Result<()> {
     let oid = initial_commit(&repo, "Initial commit")?;
 
     assert_eq!(
-        Ok(Mob::from([Author {
-            name: "Anne Other".to_owned(),
-            email: "anne@example.com".to_owned()
-        }])),
+        Ok(Mob::from([Author::new(
+            "Anne Other".to_owned(),
+            "anne@example.com".to_owned()
+        )])),
         commit_mob(dir, oid)
     );
 

@@ -48,21 +48,21 @@ pub fn commit_mob(dir: &str, oid: Oid) -> Result<Mob> {
     let matches: Vec<_> = pattern.captures_iter(message).collect();
 
     let author = commit.author();
-    let mut authors = Mob::from([Author {
-        name: author.name().expect("couldn't get author name").to_owned(),
-        email: author
+    let mut authors = Mob::from([Author::new(
+        author.name().expect("couldn't get author name").to_owned(),
+        author
             .email()
             .expect("couldn't get author email")
             .to_owned(),
-    }]);
+    )]);
 
     for capture in matches {
         let name = capture.get(1).expect("Couldn't get name");
         let email = capture.get(2).expect("Couldn't get email");
-        authors.insert(Author {
-            name: name.as_str().to_owned(),
-            email: email.as_str().to_owned(),
-        });
+        authors.insert(Author::new(
+            name.as_str().to_owned(),
+            email.as_str().to_owned(),
+        ));
     }
 
     Ok(authors)
