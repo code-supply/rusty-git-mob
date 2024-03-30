@@ -30,19 +30,13 @@ co-authored-by: Andrew Bruce <me@andrewbruce.net>",
 
     let tally = mob_tally(dir).expect("Couldn't get tally");
     let anne_and_andrew = Mob::from([
-        Author::new("Anne Other".to_owned(), "anne@example.com".to_owned()),
-        Author::new("Andrew Bruce".to_owned(), "me@andrewbruce.net".to_owned()),
+        Author::new("Anne Other", "anne@example.com"),
+        Author::new("Andrew Bruce", "me@andrewbruce.net"),
     ]);
     let anne_maggie_and_mr_potato_head = Mob::from([
-        Author::new("Anne Other".to_owned(), "anne@example.com".to_owned()),
-        Author::new(
-            "Maggie Hamilton".to_owned(),
-            "margaret@example.com".to_owned(),
-        ),
-        Author::new(
-            "Mr Potato Head".to_owned(),
-            "tatties@example.com".to_owned(),
-        ),
+        Author::new("Anne Other", "anne@example.com"),
+        Author::new("Maggie Hamilton", "margaret@example.com"),
+        Author::new("Mr Potato Head", "tatties@example.com"),
     ]);
 
     assert_eq!(2, tally.len());
@@ -64,8 +58,8 @@ co-AuthoReD-By: Andrew Bruce <me@andrewbruce.net>",
 
     let tally = mob_tally(dir).expect("Couldn't get tally");
     let expected_mob = Mob::from([
-        Author::new("Anne Other".to_owned(), "anne@example.com".to_owned()),
-        Author::new("Andrew Bruce".to_owned(), "me@andrewbruce.net".to_owned()),
+        Author::new("Anne Other", "anne@example.com"),
+        Author::new("Andrew Bruce", "me@andrewbruce.net"),
     ]);
 
     assert_eq!(1, tally.len());
@@ -81,10 +75,7 @@ fn can_get_mob_from_commit_without_trailers() -> Result<()> {
     let oid = initial_commit(&repo, "Initial commit")?;
 
     assert_eq!(
-        Ok(Mob::from([Author::new(
-            "Anne Other".to_owned(),
-            "anne@example.com".to_owned()
-        )])),
+        Ok(Mob::from([Author::new("Anne Other", "anne@example.com")])),
         commit_mob(dir, oid)
     );
 

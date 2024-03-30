@@ -156,11 +156,11 @@ fn coauthors(initials: &InputMob) -> Team {
     Team::from([
         (
             "ab".to_owned(),
-            Author::new("Andrew Bruce".to_owned(), "me@andrewbruce.net".to_owned()),
+            Author::new("Andrew Bruce", "me@andrewbruce.net"),
         ),
         (
             "fb".to_owned(),
-            Author::new("Fred Brookes".to_owned(), "fred@example.com".to_owned()),
+            Author::new("Fred Brookes", "fred@example.com"),
         ),
     ])
     .into_iter()

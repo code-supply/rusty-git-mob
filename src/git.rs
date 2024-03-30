@@ -49,20 +49,14 @@ pub fn commit_mob(dir: &str, oid: Oid) -> Result<Mob> {
 
     let author = commit.author();
     let mut authors = Mob::from([Author::new(
-        author.name().expect("couldn't get author name").to_owned(),
-        author
-            .email()
-            .expect("couldn't get author email")
-            .to_owned(),
+        author.name().expect("couldn't get author name"),
+        author.email().expect("couldn't get author email"),
     )]);
 
     for capture in matches {
         let name = capture.get(1).expect("Couldn't get name");
         let email = capture.get(2).expect("Couldn't get email");
-        authors.insert(Author::new(
-            name.as_str().to_owned(),
-            email.as_str().to_owned(),
-        ));
+        authors.insert(Author::new(name.as_str(), email.as_str()));
     }
 
     Ok(authors)

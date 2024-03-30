@@ -8,23 +8,17 @@ fn can_show_mob_tallies_for_mobs_and_soloists() -> MainResult {
         let mut tallies = Tallies::new();
         tallies.insert(
             Mob::from([
-                Author::new("Neil Young".to_owned(), "neil@example.com".to_owned()),
-                Author::new("Andrew Bruce".to_owned(), "me@andrewbruce.net".to_owned()),
+                Author::new("Neil Young", "neil@example.com"),
+                Author::new("Andrew Bruce", "me@andrewbruce.net"),
             ]),
             11,
         );
         tallies.insert(
-            Mob::from([Author::new(
-                "Andrew Bruce".to_owned(),
-                "me@andrewbruce.net".to_owned(),
-            )]),
+            Mob::from([Author::new("Andrew Bruce", "me@andrewbruce.net")]),
             25,
         );
         tallies.insert(
-            Mob::from([Author::new(
-                "Billy Talbot".to_owned(),
-                "billy@example.com".to_owned(),
-            )]),
+            Mob::from([Author::new("Billy Talbot", "billy@example.com")]),
             25,
         );
         Ok(tallies)

@@ -21,10 +21,10 @@ pub struct Author {
 }
 
 impl Author {
-    pub fn new(name: String, email: String) -> Author {
+    pub fn new(name: &str, email: &str) -> Author {
         Author {
-            name,
-            email,
+            name: name.to_owned(),
+            email: email.to_owned(),
             ..Default::default()
         }
     }
