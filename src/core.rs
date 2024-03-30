@@ -19,7 +19,7 @@ pub type Team = BTreeMap<String, Author>;
 pub struct Author {
     pub name: String,
     email: String,
-    alternate_emails: BTreeSet<String>,
+    alternate_emails: Option<BTreeSet<String>>,
 }
 
 impl Author {
