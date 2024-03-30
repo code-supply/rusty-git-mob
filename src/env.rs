@@ -33,14 +33,14 @@ pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
         serde_json::from_reader(BufReader::new(coauthors_file))?;
 
     let mob: serde_json::Result<Vec<String>> = serde_json::from_reader(BufReader::new(&mob_file));
-    let mob_set = match mob {
+    let mob_currently_set = match mob {
         Ok(mob) => InputMob::from_iter(mob.iter().cloned()),
         Err(_) => InputMob::default(),
     };
 
     Ok(Env {
         mob_file,
-        mob: mob_set,
+        mob: mob_currently_set,
         template_file,
         org: coauthors_config.teams,
     })
