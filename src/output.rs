@@ -1,4 +1,4 @@
-use crate::config::*;
+use crate::config;
 
 pub type MainResult = Result<(), Box<dyn std::error::Error>>;
 
@@ -7,13 +7,10 @@ pub struct Output {
     pub message: String,
 }
 
-pub fn trailers(team: &Team, initials: &CurrentMobInitials) -> String {
+pub fn trailers(team: &config::Team, initials: &config::CurrentMobInitials) -> String {
     initials
         .iter()
-        .fold(String::new(), |acc, initial| match team.get(initial) {
-            Some(author) => {
-                format!("{}Co-authored-by: {}\n", acc, author)
-            }
-            None => acc,
-        })
+        .filter_map(|initial| team.get(initial))
+        .map(|author| format!("Co-authored-by: {}\n", author))
+        .collect()
 }
