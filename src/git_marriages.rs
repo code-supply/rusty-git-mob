@@ -38,26 +38,30 @@ where
             .map(|author| author.use_configured(&configured_authors))
             .collect();
 
-        match consolidated_tallies.get(&mapped_mob) {
-            Some(existing_tally) => consolidated_tallies.insert(mapped_mob, existing_tally + count),
-            None => consolidated_tallies.insert(mapped_mob, count),
-        };
+        let total = consolidated_tallies.get(&mapped_mob).unwrap_or(&0usize) + count;
+
+        consolidated_tallies.insert(mapped_mob, total);
     }
 
+    let message = results(consolidated_tallies)
+        .iter()
+        .fold("".to_owned(), |acc, (count, mob)| {
+            let mut authors = Vec::from_iter(mob);
+            authors.sort();
+            let authors_formatted: String = format_authors(authors).join(", ");
+            acc + &format!("{}: {}{}\n", count, authors_formatted, solo_indicator(mob))
+        });
+
+    Ok(Output { message })
+}
+
+fn results(consolidated_tallies: Tallies) -> Vec<(usize, BTreeSet<Author>)> {
     let mut results: Vec<(usize, Mob)> = Vec::new();
     for (mob, count) in consolidated_tallies {
         results.push((count, mob));
     }
     results.sort();
-
-    let message = results.iter().fold("".to_owned(), |acc, (count, mob)| {
-        let mut authors = Vec::from_iter(mob);
-        authors.sort();
-        let authors_formatted: String = format_authors(authors).join(", ");
-        acc + &format!("{}: {}{}\n", count, authors_formatted, solo_indicator(mob))
-    });
-
-    Ok(Output { message })
+    results
 }
 
 fn format_authors(authors: Vec<&crate::core::Author>) -> Vec<String> {
