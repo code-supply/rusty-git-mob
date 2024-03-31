@@ -66,9 +66,10 @@ fn format_authors(authors: Vec<&crate::config::Author>) -> Vec<String> {
 }
 
 fn solo_indicator(mob: &std::collections::BTreeSet<crate::config::Author>) -> &str {
-    match mob.len() {
-        1 => " (solo)",
-        _ => "",
+    if mob.len() == 1 {
+        " (solo)"
+    } else {
+        ""
     }
 }
 
