@@ -5,6 +5,6 @@ use rusty_git_mob::output::MainResult;
 
 fn main() -> MainResult {
     let env = env::load()?;
-    let output = output("", &InputMob::new());
+    let output = output("", &CurrentMobInitials::new());
     write(&env.template_file, &env.mob_file, output)
 }

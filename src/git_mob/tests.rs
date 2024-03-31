@@ -6,8 +6,8 @@ use crate::tests::team;
 fn empty_input_returns_empty_output() {
     assert_eq!(
         process(
-            &team(&InputMob::new()),
-            &InputMob::new(),
+            &team(&config::CurrentMobInitials::new()),
+            &config::CurrentMobInitials::new(),
             &Args {
                 initials: vec![],
                 ..Default::default()
@@ -21,8 +21,8 @@ fn empty_input_returns_empty_output() {
 fn forming_a_mob_outputs_the_mob_and_template() {
     assert_eq!(
         process(
-            &team(&InputMob::from(["ab".to_owned()])),
-            &InputMob::new(),
+            &team(&config::CurrentMobInitials::from(["ab".to_owned()])),
+            &config::CurrentMobInitials::new(),
             &Args {
                 initials: vec!["ab".to_owned()],
                 ..Default::default()
@@ -31,7 +31,7 @@ fn forming_a_mob_outputs_the_mob_and_template() {
         Output {
             message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
             template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
-            mob: InputMob::from(["ab".to_owned()]),
+            mob: config::CurrentMobInitials::from(["ab".to_owned()]),
         }
     );
 }
@@ -40,8 +40,11 @@ fn forming_a_mob_outputs_the_mob_and_template() {
 fn can_add_many_mobsters() {
     assert_eq!(
         process(
-            &team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
-            &InputMob::new(),
+            &team(&config::CurrentMobInitials::from([
+                "ab".to_owned(),
+                "fb".to_owned()
+            ])),
+            &config::CurrentMobInitials::new(),
             &Args {
                 initials: vec!["ab".to_owned(), "fb".to_owned()],
                 ..Default::default()
@@ -54,7 +57,7 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
             template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                 .to_owned(),
-            mob: InputMob::from(["ab".to_owned(), "fb".to_owned()]),
+            mob: config::CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
         }
     );
 }
@@ -63,8 +66,11 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
 fn calling_without_initials_outputs_current_mob() {
     assert_eq!(
         process(
-            &team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
-            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
+            &team(&config::CurrentMobInitials::from([
+                "ab".to_owned(),
+                "fb".to_owned()
+            ])),
+            &config::CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
             &Args {
                 initials: vec![],
                 ..Default::default()
@@ -79,25 +85,31 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
 Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                 .to_owned(),
-            mob: InputMob::from(["ab".to_owned(), "fb".to_owned()]),
+            mob: config::CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
         }
     )
 }
 
 #[test]
 fn coauthors_are_sorted_by_initials() {
-    let a = team(&InputMob::from(["ab".to_owned(), "fb".to_owned()]));
+    let a = team(&config::CurrentMobInitials::from([
+        "ab".to_owned(),
+        "fb".to_owned(),
+    ]));
     let expected: Vec<_> = a.iter().collect();
-    let b = team(&InputMob::from(["fb".to_owned(), "ab".to_owned()]));
+    let b = team(&config::CurrentMobInitials::from([
+        "fb".to_owned(),
+        "ab".to_owned(),
+    ]));
     let actual: Vec<_> = b.iter().collect();
     assert_eq!(actual, expected)
 }
 
 #[test]
 fn mob_is_sorted() {
-    let a = InputMob::from(["ab".to_owned(), "fb".to_owned()]);
+    let a = config::CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]);
     let expected: Vec<_> = a.iter().collect();
-    let b = InputMob::from(["fb".to_owned(), "ab".to_owned()]);
+    let b = config::CurrentMobInitials::from(["fb".to_owned(), "ab".to_owned()]);
     let actual: Vec<_> = b.iter().collect();
     assert_eq!(actual, expected)
 }

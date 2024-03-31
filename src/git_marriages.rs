@@ -1,9 +1,5 @@
-use crate::config::whole_org_as_team;
-use crate::config::Author;
-use crate::config::Mob;
-use crate::config::Org;
+use crate::config;
 use crate::git;
-use crate::git::Tallies;
 use std::collections::BTreeSet;
 
 type Result<T> = std::result::Result<T, Error>;
@@ -24,16 +20,17 @@ pub struct Output {
     pub message: String,
 }
 
-pub fn process<F>(org: Org, tallies: F) -> Result<Output>
+pub fn process<F>(org: config::Org, tallies: F) -> Result<Output>
 where
-    F: Fn() -> git::Result<Tallies>,
+    F: Fn() -> git::Result<git::Tallies>,
 {
-    let team = whole_org_as_team(&org);
-    let configured_authors: BTreeSet<Author> = team.values().map(|a| a.to_owned()).collect();
+    let team = config::whole_org_as_team(&org);
+    let configured_authors: BTreeSet<config::Author> =
+        team.values().map(|a| a.to_owned()).collect();
 
-    let mut consolidated_tallies = Tallies::new();
+    let mut consolidated_tallies = git::Tallies::new();
     for (mob, count) in tallies()? {
-        let mapped_mob: BTreeSet<Author> = mob
+        let mapped_mob: BTreeSet<config::Author> = mob
             .iter()
             .map(|author| author.use_configured(&configured_authors))
             .collect();
@@ -55,8 +52,8 @@ where
     Ok(Output { message })
 }
 
-fn results(consolidated_tallies: Tallies) -> Vec<(usize, BTreeSet<Author>)> {
-    let mut results: Vec<(usize, Mob)> = Vec::new();
+fn results(consolidated_tallies: git::Tallies) -> Vec<(usize, BTreeSet<config::Author>)> {
+    let mut results: Vec<(usize, config::Mob)> = Vec::new();
     for (mob, count) in consolidated_tallies {
         results.push((count, mob));
     }

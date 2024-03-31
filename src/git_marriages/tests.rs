@@ -1,19 +1,16 @@
-use super::*;
-use crate::config::Author;
-use crate::config::Mob;
-use crate::config::Org;
-use crate::config::Team;
-use crate::output::MainResult;
 use std::collections::BTreeSet;
 
+use super::*;
+use crate::output;
+
 #[test]
-fn can_show_mob_tallies_for_mobs_and_soloists() -> MainResult {
-    let org = Org::from([(
+fn can_show_mob_tallies_for_mobs_and_soloists() -> output::MainResult {
+    let org = config::Org::from([(
         "cool gang".to_owned(),
-        Team::from([
+        config::Team::from([
             (
                 "ab".to_owned(),
-                Author::new_with_alternates(
+                config::Author::new_with_alternates(
                     "Andrew Bruce",
                     "me@andrewbruce.net",
                     BTreeSet::from(["andrew.bruce@maersk.com".to_owned()]),
@@ -21,29 +18,32 @@ fn can_show_mob_tallies_for_mobs_and_soloists() -> MainResult {
             ),
             (
                 "fb".to_owned(),
-                Author::new("Random Person", "notincommits@example.com"),
+                config::Author::new("Random Person", "notincommits@example.com"),
             ),
         ]),
     )]);
     let output = process(org, || {
-        let mut tallies = Tallies::new();
+        let mut tallies = git::Tallies::new();
         tallies.insert(
-            Mob::from([
-                Author::new("Neil Young", "neil-not-on-team@example.com"),
-                Author::new("Andrew Bruce", "me@andrewbruce.net"),
+            config::Mob::from([
+                config::Author::new("Neil Young", "neil-not-on-team@example.com"),
+                config::Author::new("Andrew Bruce", "me@andrewbruce.net"),
             ]),
             11,
         );
         tallies.insert(
-            Mob::from([Author::new("Andrew Bruce", "andrew.bruce@maersk.com")]),
+            config::Mob::from([config::Author::new(
+                "Andrew Bruce",
+                "andrew.bruce@maersk.com",
+            )]),
             25,
         );
         tallies.insert(
-            Mob::from([Author::new("Andrew Bruce", "me@andrewbruce.net")]),
+            config::Mob::from([config::Author::new("Andrew Bruce", "me@andrewbruce.net")]),
             26,
         );
         tallies.insert(
-            Mob::from([Author::new("Billy Talbot", "billy@example.com")]),
+            config::Mob::from([config::Author::new("Billy Talbot", "billy@example.com")]),
             25,
         );
         Ok(tallies)
@@ -58,8 +58,8 @@ fn can_show_mob_tallies_for_mobs_and_soloists() -> MainResult {
 }
 
 #[test]
-fn copes_with_error_getting_tallies() -> MainResult {
-    let org = Org::from([]);
+fn copes_with_error_getting_tallies() -> output::MainResult {
+    let org = config::Org::from([]);
     let output = process(org, || {
         Err(git::Error {
             message: "bad stuff happened".to_owned(),

@@ -6,19 +6,19 @@ use std::path::PathBuf;
 use serde::Deserialize;
 use serde_json;
 
-use crate::config::{InputMob, Org};
+use crate::config;
 use crate::io::open_read_write;
 
 pub struct Env {
     pub mob_file: File,
-    pub mob: InputMob,
+    pub mob: config::CurrentMobInitials,
     pub template_file: File,
-    pub org: Org,
+    pub org: config::Org,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 struct CoauthorsConfig {
-    pub teams: Org,
+    pub teams: config::Org,
 }
 
 pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
@@ -35,8 +35,8 @@ pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
 
     let mob: serde_json::Result<Vec<String>> = serde_json::from_reader(BufReader::new(&mob_file));
     let mob_currently_set = match mob {
-        Ok(mob) => InputMob::from_iter(mob.iter().cloned()),
-        Err(_) => InputMob::default(),
+        Ok(mob) => config::CurrentMobInitials::from_iter(mob.iter().cloned()),
+        Err(_) => config::CurrentMobInitials::default(),
     };
 
     Ok(Env {

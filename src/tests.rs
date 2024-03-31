@@ -1,8 +1,8 @@
 use crate::config::Author;
-use crate::config::InputMob;
+use crate::config::CurrentMobInitials;
 use crate::config::Team;
 
-pub fn team(initials: &InputMob) -> Team {
+pub fn team(initials: &CurrentMobInitials) -> Team {
     Team::from([
         (
             "ab".to_owned(),

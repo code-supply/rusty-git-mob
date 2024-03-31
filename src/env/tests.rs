@@ -29,7 +29,7 @@ fn git_mob_file_gets_initialised_when_non_existent() {
     std::env::set_var("GIT_MOB_TEMPLATE", "tmp/existent-template");
 
     with_coauthors("tmp/existent-coauthors", json, |git_mob_env| {
-        assert_eq!(InputMob::default(), git_mob_env.mob);
+        assert_eq!(config::CurrentMobInitials::default(), git_mob_env.mob);
     });
 
     let _ignore_errors = std::fs::remove_file("tmp/existent-template");
@@ -40,7 +40,7 @@ fn authors_can_exclude_alternate_emails() {
     let json = b"{\"teams\": { \"main\": { \"ab\": { \"name\": \"Andrew Bruce\", \"email\": \"me@andrewbruce.net\" } } }}";
 
     with_coauthors("tmp/empty-alternates", json, |git_mob_env| {
-        let expected_org = Org::from([(
+        let expected_org = config::Org::from([(
             "main".to_owned(),
             Team::from([(
                 "ab".to_owned(),

@@ -17,7 +17,7 @@ pub fn parse_args() -> Args {
 
 pub fn prepare_commit_message(
     org: &Org,
-    mob: &InputMob,
+    mob: &CurrentMobInitials,
     message: String,
     branch_name: Option<&str>,
 ) -> Output {

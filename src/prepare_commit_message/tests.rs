@@ -7,7 +7,7 @@ fn empty_coauthors_produces_empty_message() {
     assert_eq!(
         prepare_commit_message(
             &Org::from([("cool gang".to_owned(), Team::default())]),
-            &InputMob::default(),
+            &CurrentMobInitials::default(),
             "".to_owned(),
             Some("main")
         ),
@@ -20,7 +20,7 @@ fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
     assert_eq!(
         prepare_commit_message(
             &Org::from([("cool gang".to_owned(), Team::default())]),
-            &InputMob::default(),
+            &CurrentMobInitials::default(),
             "# original comment".to_owned(),
             Some("main")
         ),
@@ -36,9 +36,12 @@ fn adds_coauthors_to_message_without_comments() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
+                team(&CurrentMobInitials::from([
+                    "ab".to_owned(),
+                    "fb".to_owned()
+                ])),
             )]),
-            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
+            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
             "Hello, World!".to_owned(),
             Some("main")
         ),
@@ -59,9 +62,12 @@ fn adds_coauthors_to_existing_message() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
+                team(&CurrentMobInitials::from([
+                    "ab".to_owned(),
+                    "fb".to_owned()
+                ])),
             )]),
-            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
+            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
             r#"Hello, World!
 
 # some comments
@@ -90,9 +96,12 @@ fn adds_newline_and_coauthors_to_a_comment_only_message() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
+                team(&CurrentMobInitials::from([
+                    "ab".to_owned(),
+                    "fb".to_owned()
+                ])),
             )]),
-            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
+            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
             r#"# some comments
 # go here
 "#
@@ -126,9 +135,12 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
+                team(&CurrentMobInitials::from([
+                    "ab".to_owned(),
+                    "fb".to_owned()
+                ])),
             )]),
-            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
+            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
             Some("main")
         ),
@@ -144,9 +156,12 @@ fn does_not_change_commits_during_a_rebase() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()]))
+                team(&CurrentMobInitials::from([
+                    "ab".to_owned(),
+                    "fb".to_owned()
+                ]))
             )]),
-            &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
+            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
             None
         ),

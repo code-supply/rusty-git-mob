@@ -7,7 +7,7 @@ pub struct Output {
     pub message: String,
 }
 
-pub fn trailers(team: &Team, initials: &InputMob) -> String {
+pub fn trailers(team: &Team, initials: &CurrentMobInitials) -> String {
     initials
         .iter()
         .fold(String::new(), |acc, initial| match team.get(initial) {

@@ -3,7 +3,7 @@ use std::collections::{BTreeMap, BTreeSet};
 mod author;
 pub use author::Author;
 
-pub type InputMob = BTreeSet<String>;
+pub type CurrentMobInitials = BTreeSet<String>;
 pub type Mob = BTreeSet<Author>;
 pub type Org = BTreeMap<String, Team>;
 pub type Team = BTreeMap<String, Author>;

@@ -1,4 +1,4 @@
-use crate::config::*;
+use crate::config;
 use crate::io::write_file;
 use crate::output::trailers;
 use crate::output::MainResult;
@@ -18,15 +18,15 @@ pub struct Args {
 pub struct Output {
     pub message: String,
     pub template: String,
-    pub mob: InputMob,
+    pub mob: config::CurrentMobInitials,
 }
 
 pub fn parse_args() -> Args {
     Args::parse()
 }
 
-pub fn process(team: &Team, mob: &InputMob, args: &Args) -> Output {
-    let initials = InputMob::from_iter(args.initials.iter().cloned());
+pub fn process(team: &config::Team, mob: &config::CurrentMobInitials, args: &Args) -> Output {
+    let initials = config::CurrentMobInitials::from_iter(args.initials.iter().cloned());
 
     if initials.is_empty() {
         output(&trailers(team, mob), mob)
@@ -35,7 +35,7 @@ pub fn process(team: &Team, mob: &InputMob, args: &Args) -> Output {
     }
 }
 
-pub fn output(formatted_trailers: &str, mob: &InputMob) -> Output {
+pub fn output(formatted_trailers: &str, mob: &config::CurrentMobInitials) -> Output {
     Output {
         message: formatted_trailers.to_owned(),
         template: if formatted_trailers.is_empty() {
