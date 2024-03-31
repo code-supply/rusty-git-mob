@@ -9,6 +9,12 @@ pub struct Author {
     alternate_emails: Option<BTreeSet<String>>,
 }
 
+impl fmt::Display for Author {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} <{}>", self.name, self.email)
+    }
+}
+
 impl Author {
     pub fn new(name: &str, email: &str) -> Author {
         Author {
@@ -44,11 +50,5 @@ impl Author {
                 .alternate_emails
                 .to_owned()
                 .is_some_and(|e| e.contains(&found_author.email))
-    }
-}
-
-impl fmt::Display for Author {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} <{}>", self.name, self.email)
     }
 }
