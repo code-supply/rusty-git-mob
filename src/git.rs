@@ -25,18 +25,17 @@ impl From<git2::Error> for Error {
 pub fn mob_tally(dir: &str) -> Result<Tallies> {
     let repo = Repository::open(dir)?;
     let mut revwalk = repo.revwalk()?;
-    let _ = revwalk.push_head();
+
+    revwalk.push_head()?;
     revwalk.set_sorting(git2::Sort::TIME)?;
 
-    let mut counts = Tallies::new();
+    let mut tallies = Tallies::new();
     for commit_id in revwalk {
         let mob = commit_mob(dir, commit_id?)?;
-        match counts.get(&mob) {
-            Some(existing_count) => counts.insert(mob, existing_count + 1),
-            None => counts.insert(mob, 1),
-        };
+        let count = tallies.get(&mob).unwrap_or(&0) + 1;
+        tallies.insert(mob, count);
     }
-    Ok(counts)
+    Ok(tallies)
 }
 
 pub fn commit_mob(dir: &str, oid: Oid) -> Result<Mob> {
