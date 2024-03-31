@@ -1,7 +1,7 @@
-use rusty_git_mob::config::MainResult;
 use rusty_git_mob::env;
 use rusty_git_mob::git::mob_tally;
 use rusty_git_mob::git_marriages::process;
+use rusty_git_mob::output::MainResult;
 
 fn main() -> MainResult {
     let env = env::load()?;

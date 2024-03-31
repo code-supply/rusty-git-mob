@@ -1,12 +1,13 @@
-use serde_json;
 use std::env;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
 
 use serde::Deserialize;
+use serde_json;
 
-use crate::config::{open_read_write, InputMob, Org};
+use crate::config::{InputMob, Org};
+use crate::io::open_read_write;
 
 pub struct Env {
     pub mob_file: File,

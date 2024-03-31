@@ -1,4 +1,5 @@
 use super::*;
+use crate::output::Output;
 use crate::tests::team;
 
 #[test]

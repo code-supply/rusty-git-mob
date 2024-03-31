@@ -1,3 +1,4 @@
+use crate::output::*;
 use clap::Parser;
 
 use crate::config::*;

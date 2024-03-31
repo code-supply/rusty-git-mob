@@ -1,6 +1,8 @@
-use rusty_git_mob::config::*;
 use rusty_git_mob::env;
 use rusty_git_mob::git;
+use rusty_git_mob::io::open_read_write;
+use rusty_git_mob::io::write_file;
+use rusty_git_mob::output::MainResult;
 use rusty_git_mob::prepare_commit_message::*;
 use std::io::Read;
 

@@ -1,8 +1,8 @@
 use rusty_git_mob::config::whole_org_as_team;
-use rusty_git_mob::config::MainResult;
 use rusty_git_mob::env;
 use rusty_git_mob::git_mob::Output;
 use rusty_git_mob::git_mob::*;
+use rusty_git_mob::output::MainResult;
 use rusty_git_mob::picker;
 
 fn main() -> MainResult {

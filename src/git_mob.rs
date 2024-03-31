@@ -1,4 +1,7 @@
 use crate::config::*;
+use crate::io::write_file;
+use crate::output::trailers;
+use crate::output::MainResult;
 use clap::Parser;
 use std::fs::File;
 

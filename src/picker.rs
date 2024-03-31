@@ -4,13 +4,13 @@ use cursive::views::{Checkbox, Dialog};
 use cursive::{event::Key, views::ListView};
 
 use crate::config;
-use crate::config::trailers;
 use crate::config::InputMob;
-use crate::config::MainResult;
 use crate::config::Org;
 use crate::config::Team;
 use crate::git_mob::output;
 use crate::git_mob::Output;
+use crate::output::trailers;
+use crate::output::MainResult;
 
 pub fn run<F>(org: Org, mob: &InputMob, write: F)
 where
