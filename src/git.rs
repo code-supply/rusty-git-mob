@@ -39,23 +39,18 @@ pub fn mob_tally(dir: &str) -> Result<Tallies> {
 }
 
 pub fn commit_mob(dir: &str, oid: Oid) -> Result<Mob> {
+    let pattern = Regex::new(r"(?i)co-authored-by: (?<name>.+) <(?<email>.+)>").unwrap();
     let repo = Repository::open(dir)?;
     let commit = repo.find_commit(oid)?;
-
-    let pattern = Regex::new(r"(?i)co-authored-by: (.+) <(.+)>").unwrap();
-    let message = commit.message().expect("Couldn't get message");
-    let matches: Vec<_> = pattern.captures_iter(message).collect();
-
+    let message = commit.message().expect("Message should be valid UTF-8");
     let author = commit.author();
     let mut authors = Mob::from([Author::new(
-        author.name().expect("couldn't get author name"),
-        author.email().expect("couldn't get author email"),
+        author.name().expect("Name should be valid UTF-8"),
+        author.email().expect("Email should be valid UTF-8"),
     )]);
 
-    for capture in matches {
-        let name = capture.get(1).expect("Couldn't get name");
-        let email = capture.get(2).expect("Couldn't get email");
-        authors.insert(Author::new(name.as_str(), email.as_str()));
+    for captures in pattern.captures_iter(message) {
+        authors.insert(Author::new(&captures["name"], &captures["email"]));
     }
 
     Ok(authors)
