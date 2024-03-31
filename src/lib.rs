@@ -5,3 +5,6 @@ pub mod git_marriages;
 pub mod git_mob;
 pub mod picker;
 pub mod prepare_commit_message;
+
+#[cfg(test)]
+mod tests;

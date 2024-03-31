@@ -1,4 +1,5 @@
 use super::*;
+use crate::tests::team;
 
 #[test]
 fn empty_coauthors_produces_empty_message() {
@@ -34,7 +35,7 @@ fn adds_coauthors_to_message_without_comments() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
+                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
             )]),
             &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             "Hello, World!".to_owned(),
@@ -57,7 +58,7 @@ fn adds_coauthors_to_existing_message() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
+                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
             )]),
             &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             r#"Hello, World!
@@ -88,7 +89,7 @@ fn adds_newline_and_coauthors_to_a_comment_only_message() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
+                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
             )]),
             &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             r#"# some comments
@@ -124,7 +125,7 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
+                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()])),
             )]),
             &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
@@ -142,7 +143,7 @@ fn does_not_change_commits_during_a_rebase() {
         prepare_commit_message(
             &Org::from([(
                 "cool gang".to_owned(),
-                coauthors(&InputMob::from(["ab".to_owned(), "fb".to_owned()]))
+                team(&InputMob::from(["ab".to_owned(), "fb".to_owned()]))
             )]),
             &InputMob::from(["ab".to_owned(), "fb".to_owned()]),
             message.clone(),
@@ -150,20 +151,4 @@ fn does_not_change_commits_during_a_rebase() {
         ),
         Output { message }
     )
-}
-
-fn coauthors(initials: &InputMob) -> Team {
-    Team::from([
-        (
-            "ab".to_owned(),
-            Author::new("Andrew Bruce", "me@andrewbruce.net"),
-        ),
-        (
-            "fb".to_owned(),
-            Author::new("Fred Brookes", "fred@example.com"),
-        ),
-    ])
-    .into_iter()
-    .filter(|(k, _v)| initials.contains(k))
-    .collect()
 }

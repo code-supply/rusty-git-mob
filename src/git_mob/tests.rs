@@ -1,6 +1,6 @@
 use super::*;
-use crate::core::Author;
 use crate::git_mob::Output;
+use crate::tests::team;
 
 #[test]
 fn empty_input_returns_empty_output() {
@@ -100,20 +100,4 @@ fn mob_is_sorted() {
     let b = InputMob::from(["fb".to_owned(), "ab".to_owned()]);
     let actual: Vec<_> = b.iter().collect();
     assert_eq!(actual, expected)
-}
-
-fn team(initials: &InputMob) -> Team {
-    Team::from([
-        (
-            "ab".to_owned(),
-            Author::new("Andrew Bruce", "me@andrewbruce.net"),
-        ),
-        (
-            "fb".to_owned(),
-            Author::new("Fred Brookes", "fred@example.com"),
-        ),
-    ])
-    .into_iter()
-    .filter(|(k, _v)| initials.contains(k))
-    .collect()
 }
