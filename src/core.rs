@@ -43,7 +43,15 @@ impl Author {
         }
     }
 
-    pub fn is_configured_equivalent_of(&self, found_author: &Author) -> bool {
+    pub fn use_configured(&self, configured_authors: &BTreeSet<Author>) -> Author {
+        configured_authors
+            .iter()
+            .find(|candidate| candidate.is_configured_equivalent_of(self))
+            .unwrap_or(self)
+            .to_owned()
+    }
+
+    fn is_configured_equivalent_of(&self, found_author: &Author) -> bool {
         self.email == found_author.email
             || self
                 .alternate_emails

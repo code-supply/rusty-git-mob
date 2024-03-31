@@ -35,13 +35,7 @@ where
     for (mob, count) in tallies()? {
         let mapped_mob: BTreeSet<Author> = mob
             .iter()
-            .map(|author| {
-                configured_authors
-                    .iter()
-                    .find(|candidate| candidate.is_configured_equivalent_of(author))
-                    .unwrap_or(author)
-            })
-            .map(|a| a.to_owned())
+            .map(|author| author.use_configured(&configured_authors))
             .collect();
 
         match consolidated_tallies.get(&mapped_mob) {
