@@ -1,8 +1,10 @@
+use crate::core::whole_org_as_team;
+use crate::core::Author;
 use crate::core::Mob;
+use crate::core::Org;
 use crate::git;
 use crate::git::Tallies;
-
-pub type MainResult = std::result::Result<(), Error>;
+use std::collections::BTreeSet;
 
 type Result<T> = std::result::Result<T, Error>;
 
@@ -22,12 +24,34 @@ pub struct Output {
     pub message: String,
 }
 
-pub fn process<F>(tallies: F) -> Result<Output>
+pub fn process<F>(org: Org, tallies: F) -> Result<Output>
 where
     F: Fn() -> git::Result<Tallies>,
 {
-    let mut results: Vec<(usize, Mob)> = Vec::new();
+    let team = whole_org_as_team(&org);
+    let configured_authors: BTreeSet<Author> = team.values().map(|a| a.to_owned()).collect();
+
+    let mut consolidated_tallies = Tallies::new();
     for (mob, count) in tallies()? {
+        let mapped_mob: BTreeSet<Author> = mob
+            .iter()
+            .map(|author| {
+                configured_authors
+                    .iter()
+                    .find(|candidate| candidate.is_configured_equivalent_of(author))
+                    .unwrap_or(author)
+            })
+            .map(|a| a.to_owned())
+            .collect();
+
+        match consolidated_tallies.get(&mapped_mob) {
+            Some(existing_tally) => consolidated_tallies.insert(mapped_mob, existing_tally + count),
+            None => consolidated_tallies.insert(mapped_mob, count),
+        };
+    }
+
+    let mut results: Vec<(usize, Mob)> = Vec::new();
+    for (mob, count) in consolidated_tallies {
         results.push((count, mob));
     }
     results.sort();

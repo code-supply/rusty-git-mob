@@ -30,6 +30,26 @@ impl Author {
             ..Default::default()
         }
     }
+
+    pub fn new_with_alternates(
+        name: &str,
+        email: &str,
+        alternate_emails: BTreeSet<String>,
+    ) -> Author {
+        Author {
+            name: name.to_owned(),
+            email: email.to_owned(),
+            alternate_emails: Some(alternate_emails),
+        }
+    }
+
+    pub fn is_configured_equivalent_of(&self, found_author: &Author) -> bool {
+        self.email == found_author.email
+            || self
+                .alternate_emails
+                .to_owned()
+                .is_some_and(|e| e.contains(&found_author.email))
+    }
 }
 
 impl fmt::Display for Author {

@@ -1,21 +1,46 @@
 use super::*;
 use crate::core::Author;
+use crate::core::MainResult;
 use crate::core::Mob;
+use crate::core::Org;
+use crate::core::Team;
+use std::collections::BTreeSet;
 
 #[test]
 fn can_show_mob_tallies_for_mobs_and_soloists() -> MainResult {
-    let output = process(|| {
+    let org = Org::from([(
+        "cool gang".to_owned(),
+        Team::from([
+            (
+                "ab".to_owned(),
+                Author::new_with_alternates(
+                    "Andrew Bruce",
+                    "me@andrewbruce.net",
+                    BTreeSet::from(["andrew.bruce@maersk.com".to_owned()]),
+                ),
+            ),
+            (
+                "fb".to_owned(),
+                Author::new("Random Person", "notincommits@example.com"),
+            ),
+        ]),
+    )]);
+    let output = process(org, || {
         let mut tallies = Tallies::new();
         tallies.insert(
             Mob::from([
-                Author::new("Neil Young", "neil@example.com"),
+                Author::new("Neil Young", "neil-not-on-team@example.com"),
                 Author::new("Andrew Bruce", "me@andrewbruce.net"),
             ]),
             11,
         );
         tallies.insert(
-            Mob::from([Author::new("Andrew Bruce", "me@andrewbruce.net")]),
+            Mob::from([Author::new("Andrew Bruce", "andrew.bruce@maersk.com")]),
             25,
+        );
+        tallies.insert(
+            Mob::from([Author::new("Andrew Bruce", "me@andrewbruce.net")]),
+            26,
         );
         tallies.insert(
             Mob::from([Author::new("Billy Talbot", "billy@example.com")]),
@@ -24,17 +49,18 @@ fn can_show_mob_tallies_for_mobs_and_soloists() -> MainResult {
         Ok(tallies)
     });
     assert_eq!(
-        output?.message,
-        "11: Andrew Bruce <me@andrewbruce.net>, Neil Young <neil@example.com>\n\
-         25: Andrew Bruce <me@andrewbruce.net> (solo)\n\
-         25: Billy Talbot <billy@example.com> (solo)\n"
+        output.unwrap().message,
+        "11: Andrew Bruce <me@andrewbruce.net>, Neil Young <neil-not-on-team@example.com>\n\
+         25: Billy Talbot <billy@example.com> (solo)\n\
+         51: Andrew Bruce <me@andrewbruce.net> (solo)\n"
     );
     Ok(())
 }
 
 #[test]
 fn copes_with_error_getting_tallies() -> MainResult {
-    let output = process(|| {
+    let org = Org::from([]);
+    let output = process(org, || {
         Err(git::Error {
             message: "bad stuff happened".to_owned(),
         })
