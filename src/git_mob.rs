@@ -1,4 +1,4 @@
-use crate::core::*;
+use crate::config::*;
 use clap::Parser;
 use std::fs::File;
 

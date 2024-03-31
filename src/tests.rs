@@ -1,6 +1,6 @@
-use crate::core::Author;
-use crate::core::InputMob;
-use crate::core::Team;
+use crate::config::Author;
+use crate::config::InputMob;
+use crate::config::Team;
 
 pub fn team(initials: &InputMob) -> Team {
     Team::from([

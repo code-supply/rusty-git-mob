@@ -1,4 +1,4 @@
-use rusty_git_mob::core::*;
+use rusty_git_mob::config::*;
 use rusty_git_mob::env;
 use rusty_git_mob::git;
 use rusty_git_mob::prepare_commit_message::*;

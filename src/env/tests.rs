@@ -1,6 +1,6 @@
 use super::*;
-use crate::core::Author;
-use crate::core::Team;
+use crate::config::Author;
+use crate::config::Team;
 use crate::env;
 use std::io::Write;
 

@@ -1,4 +1,4 @@
-pub mod core;
+pub mod config;
 pub mod env;
 pub mod git;
 pub mod git_marriages;

@@ -1,5 +1,5 @@
-use crate::core::Author;
-use crate::core::Mob;
+use crate::config::Author;
+use crate::config::Mob;
 use git2::Oid;
 use git2::Repository;
 use regex::Regex;

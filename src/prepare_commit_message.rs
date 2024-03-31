@@ -1,6 +1,6 @@
 use clap::Parser;
 
-use crate::core::*;
+use crate::config::*;
 
 #[derive(Parser, Debug, Default)]
 pub struct Args {

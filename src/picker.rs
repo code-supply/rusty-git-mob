@@ -3,12 +3,12 @@ use cursive::views::ScrollView;
 use cursive::views::{Checkbox, Dialog};
 use cursive::{event::Key, views::ListView};
 
-use crate::core;
-use crate::core::trailers;
-use crate::core::InputMob;
-use crate::core::MainResult;
-use crate::core::Org;
-use crate::core::Team;
+use crate::config;
+use crate::config::trailers;
+use crate::config::InputMob;
+use crate::config::MainResult;
+use crate::config::Org;
+use crate::config::Team;
 use crate::git_mob::output;
 use crate::git_mob::Output;
 
@@ -16,7 +16,7 @@ pub fn run<F>(org: Org, mob: &InputMob, write: F)
 where
     F: Fn(Output) -> MainResult + 'static,
 {
-    let coauthors = core::whole_org_as_team(&org);
+    let coauthors = config::whole_org_as_team(&org);
     let mut siv = cursive::default();
 
     siv.set_user_data(mob.to_owned());

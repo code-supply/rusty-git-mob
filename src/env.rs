@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 use serde::Deserialize;
 
-use crate::core::{open_read_write, InputMob, Org};
+use crate::config::{open_read_write, InputMob, Org};
 
 pub struct Env {
     pub mob_file: File,

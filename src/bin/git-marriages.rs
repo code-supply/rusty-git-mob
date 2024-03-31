@@ -1,4 +1,4 @@
-use rusty_git_mob::core::MainResult;
+use rusty_git_mob::config::MainResult;
 use rusty_git_mob::env;
 use rusty_git_mob::git::mob_tally;
 use rusty_git_mob::git_marriages::process;

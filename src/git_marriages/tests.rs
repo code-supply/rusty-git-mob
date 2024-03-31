@@ -1,9 +1,9 @@
 use super::*;
-use crate::core::Author;
-use crate::core::MainResult;
-use crate::core::Mob;
-use crate::core::Org;
-use crate::core::Team;
+use crate::config::Author;
+use crate::config::MainResult;
+use crate::config::Mob;
+use crate::config::Org;
+use crate::config::Team;
 use std::collections::BTreeSet;
 
 #[test]

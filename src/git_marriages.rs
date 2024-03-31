@@ -1,7 +1,7 @@
-use crate::core::whole_org_as_team;
-use crate::core::Author;
-use crate::core::Mob;
-use crate::core::Org;
+use crate::config::whole_org_as_team;
+use crate::config::Author;
+use crate::config::Mob;
+use crate::config::Org;
 use crate::git;
 use crate::git::Tallies;
 use std::collections::BTreeSet;
@@ -64,11 +64,11 @@ fn results(consolidated_tallies: Tallies) -> Vec<(usize, BTreeSet<Author>)> {
     results
 }
 
-fn format_authors(authors: Vec<&crate::core::Author>) -> Vec<String> {
+fn format_authors(authors: Vec<&crate::config::Author>) -> Vec<String> {
     authors.iter().map(|a| a.to_string()).collect()
 }
 
-fn solo_indicator(mob: &std::collections::BTreeSet<crate::core::Author>) -> &str {
+fn solo_indicator(mob: &std::collections::BTreeSet<crate::config::Author>) -> &str {
     match mob.len() {
         1 => " (solo)",
         _ => "",

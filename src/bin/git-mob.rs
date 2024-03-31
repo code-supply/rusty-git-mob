@@ -1,5 +1,5 @@
-use rusty_git_mob::core::whole_org_as_team;
-use rusty_git_mob::core::MainResult;
+use rusty_git_mob::config::whole_org_as_team;
+use rusty_git_mob::config::MainResult;
 use rusty_git_mob::env;
 use rusty_git_mob::git_mob::Output;
 use rusty_git_mob::git_mob::*;
