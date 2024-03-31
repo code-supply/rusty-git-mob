@@ -57,13 +57,13 @@ pub fn commit_mob(dir: &str, oid: Oid) -> Result<Mob> {
 }
 
 pub fn head(dir: &str) -> Option<String> {
-    match Repository::open(dir) {
-        Ok(repo) => match repo.head() {
-            Ok(h) => h.shorthand().map(str::to_owned),
-            Err(_) => None,
-        },
-        Err(_) => None,
-    }
+    Repository::open(dir).ok().and_then(head_shorthand)
+}
+
+fn head_shorthand(repo: Repository) -> Option<String> {
+    repo.head()
+        .ok()
+        .and_then(|h| h.shorthand().map(str::to_owned))
 }
 
 #[cfg(test)]
