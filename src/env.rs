@@ -1,4 +1,3 @@
-use std::env;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;
@@ -48,16 +47,13 @@ pub fn load() -> Result<Env, Box<dyn std::error::Error>> {
 }
 
 fn resolve_path(env_var_name: &str, filename: &str) -> Result<PathBuf, String> {
-    match env::var(env_var_name) {
-        Ok(path) => Ok(PathBuf::from(path)),
-        Err(_e) => match home::home_dir() {
-            Some(path_buf) => Ok(path_buf.as_path().join(filename)),
-            None => Err(format!(
-                "{} not set and couldn't find your home dir!",
-                env_var_name
-            )),
-        },
-    }
+    std::env::var(env_var_name)
+        .map(PathBuf::from)
+        .or_else(|_e| {
+            home::home_dir()
+                .map(|path_buf| path_buf.as_path().join(filename))
+                .ok_or_else(|| format!("{} not set and couldn't find your home dir!", env_var_name))
+        })
 }
 
 #[cfg(test)]
