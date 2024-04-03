@@ -1,4 +1,8 @@
 {
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  };
+
   outputs = { self, nixpkgs }:
     let
       forAllSystems = generate: nixpkgs.lib.genAttrs [
