@@ -7,18 +7,24 @@ use rusty_git_mob::picker;
 
 fn main() -> MainResult {
     let args = parse_args();
-    let env = env::load()?;
-
-    if args.pick {
-        picker::run(env.org, &env.mob, move |output: Output| {
-            write(&env.template_file, &env.mob_file, output)
-        });
-        Ok(())
-    } else {
-        write(
-            &env.template_file,
-            &env.mob_file,
-            process(&whole_org_as_team(&env.org), &env.mob, &args),
-        )
+    match env::load() {
+        Ok(env) => {
+            if args.pick {
+                picker::run(env.org, &env.mob, move |output: Output| {
+                    write(&env.template_file, &env.mob_file, output)
+                });
+                Ok(())
+            } else {
+                write(
+                    &env.template_file,
+                    &env.mob_file,
+                    process(&whole_org_as_team(&env.org), &env.mob, &args),
+                )
+            }
+        }
+        Err(e) => {
+            println!("{}", e);
+            Err(e)?
+        }
     }
 }
