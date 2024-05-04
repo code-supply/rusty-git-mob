@@ -4,7 +4,7 @@ use crate::config::Team;
 use crate::env;
 use std::io::Write;
 
-fn with_coauthors<F>(coauthors_path: &str, mob_file_path: &str, config: &[u8], block: F)
+fn with_files<F>(coauthors_path: &str, mob_file_path: &str, config: &[u8], block: F)
 where
     F: Fn(std::result::Result<env::Env, EnvError>) + 'static,
 {
@@ -39,7 +39,7 @@ fn friendly_error_when_coauthors_file_nonexistent() {
 fn friendly_error_when_coauthors_file_not_json() {
     let json = b"{\"oops";
 
-    with_coauthors(
+    with_files(
         "tmp/existent-coauthors",
         "tmp/existent-mob-file",
         json,
@@ -58,7 +58,7 @@ fn git_mob_file_gets_initialised_when_non_existent() {
 
     let _ignore_errors = std::fs::remove_file("tmp/mob-file-init");
 
-    with_coauthors(
+    with_files(
         "tmp/coauthors-init-mob-file-test",
         "tmp/mob-file-init",
         json,
@@ -75,7 +75,7 @@ fn git_mob_file_gets_initialised_when_non_existent() {
 fn authors_can_exclude_alternate_emails() {
     let json = b"{\"teams\": { \"main\": { \"ab\": { \"name\": \"Andrew Bruce\", \"email\": \"me@andrewbruce.net\" } } }}";
 
-    with_coauthors(
+    with_files(
         "tmp/empty-alternates",
         "tmp/existent-mob-file",
         json,
