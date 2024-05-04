@@ -57,9 +57,21 @@ impl std::fmt::Display for EnvError {
 impl std::error::Error for EnvError {}
 
 pub fn load() -> Result<Env> {
-    let coauthors_path = resolve_path("GIT_MOB_COAUTHORS", ".git-coauthors")?;
-    let mob_path = resolve_path("GIT_MOB_LIST", ".git-mob")?;
-    let template_path = resolve_path("GIT_MOB_TEMPLATE", ".gitmessage.txt")?;
+    process(
+        std::env::var("GIT_MOB_COAUTHORS"),
+        std::env::var("GIT_MOB_LIST"),
+        std::env::var("GIT_MOB_TEMPLATE"),
+    )
+}
+
+pub fn process(
+    coauthors_var: std::result::Result<String, std::env::VarError>,
+    mob_list_var: std::result::Result<String, std::env::VarError>,
+    template_var: std::result::Result<String, std::env::VarError>,
+) -> Result<Env> {
+    let coauthors_path = resolve_path(coauthors_var, "GIT_MOB_COAUTHORS", ".git-coauthors")?;
+    let mob_path = resolve_path(mob_list_var, "GIT_MOB_LIST", ".git-mob")?;
+    let template_path = resolve_path(template_var, "GIT_MOB_TEMPLATE", ".gitmessage.txt")?;
 
     let coauthors_file = File::open(coauthors_path).or(Err(EnvError::MissingCoauthorsFile))?;
     let mob_file = open_read_write(mob_path).expect("mob file error");
@@ -82,14 +94,16 @@ pub fn load() -> Result<Env> {
     })
 }
 
-fn resolve_path(env_var_name: &str, filename: &str) -> std::result::Result<PathBuf, String> {
-    std::env::var(env_var_name)
-        .map(PathBuf::from)
-        .or_else(|_e| {
-            home::home_dir()
-                .map(|path_buf| path_buf.as_path().join(filename))
-                .ok_or_else(|| format!("{} not set and couldn't find your home dir!", env_var_name))
-        })
+fn resolve_path(
+    env_var: std::result::Result<String, std::env::VarError>,
+    env_var_name: &str,
+    filename: &str,
+) -> std::result::Result<PathBuf, String> {
+    env_var.map(PathBuf::from).or_else(|_e| {
+        home::home_dir()
+            .map(|path_buf| path_buf.as_path().join(filename))
+            .ok_or_else(|| format!("{} not set and couldn't find your home dir!", env_var_name))
+    })
 }
 
 #[cfg(test)]
