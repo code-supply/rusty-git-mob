@@ -95,3 +95,13 @@ State file containing the current mob.
 `GIT_MOB_TEMPLATE`
 
 The location of the template used for the pre-commit hook.
+
+## See also
+
+git-mob is a popular side-project, and has many implementations!
+
+[My previous one, in shell](https://github.com/code-supply/git-mob)
+[The Javascript one](https://github.com/rkotze/git-mob)
+[A Rust one](https://github.com/Mubashwer/git-mob)
+[Another Rust one](https://github.com/Frost/git-mob)
+[Yet Another Rust one](https://github.com/jplsek/git-mob-rs)
