@@ -37,6 +37,27 @@ fn forming_a_mob_outputs_the_mob_and_template() {
 }
 
 #[test]
+fn passing_a_message_prepends_it_to_the_mob_output() {
+    assert_eq!(
+        process(
+            &team(&config::CurrentMobInitials::from(["ab".to_owned()])),
+            &config::CurrentMobInitials::new(),
+            &Args {
+                message: Some("STORY-1234".to_owned()),
+                initials: vec!["ab".to_owned()],
+                ..Default::default()
+            }
+        ),
+        Output {
+            message: "STORY-1234\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
+            template: "\n\nSTORY-1234\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>\n"
+                .to_owned(),
+            mob: config::CurrentMobInitials::from(["ab".to_owned()]),
+        }
+    );
+}
+
+#[test]
 fn can_add_many_mobsters() {
     assert_eq!(
         process(

@@ -10,6 +10,9 @@ pub struct Args {
     #[arg(short, long)]
     pub pick: bool,
 
+    #[arg(short, long)]
+    pub message: Option<String>,
+
     #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
     pub initials: Vec<String>,
 }
@@ -29,19 +32,35 @@ pub fn process(team: &config::Team, mob: &config::CurrentMobInitials, args: &Arg
     let initials = config::CurrentMobInitials::from_iter(args.initials.iter().cloned());
 
     if initials.is_empty() {
-        output(&trailers(team, mob), mob)
+        output(&args.message, &trailers(team, mob), mob)
     } else {
-        output(&trailers(team, &initials), &initials)
+        output(&args.message, &trailers(team, &initials), &initials)
     }
 }
 
-pub fn output(formatted_trailers: &str, mob: &config::CurrentMobInitials) -> Output {
+pub fn output(
+    message: &Option<String>,
+    formatted_trailers: &str,
+    mob: &config::CurrentMobInitials,
+) -> Output {
+    let preamble = match message {
+        Some(msg) => msg.to_owned(),
+        None => "".to_owned(),
+    };
+    let msg = format!("{}\n\n{}", preamble, formatted_trailers.to_owned())
+        .trim()
+        .to_owned();
+
     Output {
-        message: formatted_trailers.to_owned(),
-        template: if formatted_trailers.is_empty() {
+        message: if msg.is_empty() {
             "".to_owned()
         } else {
-            format!("\n\n{}", formatted_trailers)
+            format!("{}\n", msg)
+        },
+        template: if msg.is_empty() {
+            "".to_owned()
+        } else {
+            format!("\n\n{}\n", msg)
         },
         mob: mob.clone(),
     }

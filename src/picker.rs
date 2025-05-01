@@ -39,7 +39,7 @@ where
         .button("OK", move |s| {
             s.with_user_data(|mob: &mut CurrentMobInitials| {
                 let ts = trailers(&coauthors, mob);
-                write(output(&ts, mob))
+                write(output(&None, &ts, mob))
             });
             s.quit()
         })
