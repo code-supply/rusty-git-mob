@@ -21,18 +21,22 @@ pub struct Args {
 pub struct Output {
     pub message: String,
     pub template: String,
-    pub mob: config::CurrentMobInitials,
+    pub mob: config::MobData,
 }
 
 pub fn parse_args() -> Args {
     Args::parse()
 }
 
-pub fn process(team: &config::Team, mob: &config::CurrentMobInitials, args: &Args) -> Output {
+pub fn process(team: &config::Team, mob: &config::MobData, args: &Args) -> Output {
     let initials = config::CurrentMobInitials::from_iter(args.initials.iter().cloned());
 
     if initials.is_empty() {
-        output(&args.message, &trailers(team, mob), mob)
+        output(
+            &args.message,
+            &trailers(team, &mob.current_mob_initials),
+            &mob.current_mob_initials,
+        )
     } else {
         output(&args.message, &trailers(team, &initials), &initials)
     }
@@ -62,7 +66,10 @@ pub fn output(
         } else {
             format!("\n\n{}\n", msg)
         },
-        mob: mob.clone(),
+        mob: config::MobData {
+            current_mob_initials: mob.to_owned(),
+            message: msg,
+        },
     }
 }
 

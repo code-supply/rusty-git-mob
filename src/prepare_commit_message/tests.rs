@@ -7,7 +7,10 @@ fn empty_coauthors_produces_empty_message() {
     assert_eq!(
         prepare_commit_message(
             &Org::from([("cool gang".to_owned(), Team::default())]),
-            &CurrentMobInitials::default(),
+            &MobData {
+                current_mob_initials: CurrentMobInitials::default(),
+                message: "".to_owned(),
+            },
             "".to_owned(),
             Some("main")
         ),
@@ -20,7 +23,7 @@ fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
     assert_eq!(
         prepare_commit_message(
             &Org::from([("cool gang".to_owned(), Team::default())]),
-            &CurrentMobInitials::default(),
+            &MobData::default(),
             "# original comment".to_owned(),
             Some("main")
         ),
@@ -41,7 +44,10 @@ fn adds_coauthors_to_message_without_comments() {
                     "fb".to_owned()
                 ])),
             )]),
-            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+            &MobData {
+                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+                message: "".to_owned(),
+            },
             "Hello, World!".to_owned(),
             Some("main")
         ),
@@ -67,7 +73,10 @@ fn adds_coauthors_to_existing_message() {
                     "fb".to_owned()
                 ])),
             )]),
-            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+            &MobData {
+                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+                message: "".to_owned(),
+            },
             r#"Hello, World!
 
 # some comments
@@ -101,7 +110,10 @@ fn adds_newline_and_coauthors_to_a_comment_only_message() {
                     "fb".to_owned()
                 ])),
             )]),
-            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+            &MobData {
+                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+                message: "".to_owned(),
+            },
             r#"# some comments
 # go here
 "#
@@ -140,7 +152,10 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
                     "fb".to_owned()
                 ])),
             )]),
-            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+            &MobData {
+                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+                message: "".to_owned(),
+            },
             message.clone(),
             Some("main")
         ),
@@ -161,7 +176,10 @@ fn does_not_change_commits_during_a_rebase() {
                     "fb".to_owned()
                 ]))
             )]),
-            &CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+            &MobData {
+                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+                message: "".to_owned(),
+            },
             message.clone(),
             None
         ),
