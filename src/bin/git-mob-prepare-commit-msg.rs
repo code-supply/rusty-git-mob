@@ -14,7 +14,7 @@ fn main() -> MainResult {
     let mut message = String::new();
     message_file.read_to_string(&mut message)?;
 
-    let output = prepare_commit_message(&env.org, &env.mob, message, git::head(".").as_deref());
+    let output = prepare_commit_message(&env.mob, message, git::head(".").as_deref());
 
     Ok(write_file(&message_file, &output.message)?)
 }

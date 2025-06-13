@@ -1,19 +1,10 @@
 use super::*;
 use crate::output::Output;
-use crate::tests::team;
 
 #[test]
 fn empty_coauthors_produces_empty_message() {
     assert_eq!(
-        prepare_commit_message(
-            &Org::from([("cool gang".to_owned(), Team::default())]),
-            &MobData {
-                current_mob_initials: CurrentMobInitials::default(),
-                message: "".to_owned(),
-            },
-            "".to_owned(),
-            Some("main")
-        ),
+        prepare_commit_message(&MobData::default(), "".to_owned(), Some("main")),
         Output::default()
     );
 }
@@ -22,7 +13,6 @@ fn empty_coauthors_produces_empty_message() {
 fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
     assert_eq!(
         prepare_commit_message(
-            &Org::from([("cool gang".to_owned(), Team::default())]),
             &MobData::default(),
             "# original comment".to_owned(),
             Some("main")
@@ -34,19 +24,12 @@ fn empty_coauthors_and_only_comments_has_no_leading_whitespace() {
 }
 
 #[test]
-fn adds_coauthors_to_message_without_comments() {
+fn adds_preformatted_trailer_to_message_without_comments() {
     assert_eq!(
         prepare_commit_message(
-            &Org::from([(
-                "cool gang".to_owned(),
-                team(&CurrentMobInitials::from([
-                    "ab".to_owned(),
-                    "fb".to_owned()
-                ])),
-            )]),
             &MobData {
-                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
-                message: "".to_owned(),
+                current_mob_initials: CurrentMobInitials::default(),
+                message: "some\nlines\n".to_owned(),
             },
             "Hello, World!".to_owned(),
             Some("main")
@@ -54,8 +37,8 @@ fn adds_coauthors_to_message_without_comments() {
         Output {
             message: r#"Hello, World!
 
-Co-authored-by: Andrew Bruce <me@andrewbruce.net>
-Co-authored-by: Fred Brookes <fred@example.com>
+some
+lines
 "#
             .to_owned()
         }
@@ -63,19 +46,12 @@ Co-authored-by: Fred Brookes <fred@example.com>
 }
 
 #[test]
-fn adds_coauthors_to_existing_message() {
+fn adds_preformatted_trailers_to_existing_message() {
     assert_eq!(
         prepare_commit_message(
-            &Org::from([(
-                "cool gang".to_owned(),
-                team(&CurrentMobInitials::from([
-                    "ab".to_owned(),
-                    "fb".to_owned()
-                ])),
-            )]),
             &MobData {
-                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
-                message: "".to_owned(),
+                current_mob_initials: CurrentMobInitials::default(),
+                message: "some\nlines\n".to_owned(),
             },
             r#"Hello, World!
 
@@ -88,8 +64,8 @@ fn adds_coauthors_to_existing_message() {
         Output {
             message: r#"Hello, World!
 
-Co-authored-by: Andrew Bruce <me@andrewbruce.net>
-Co-authored-by: Fred Brookes <fred@example.com>
+some
+lines
 
 # some comments
 # go here
@@ -100,19 +76,12 @@ Co-authored-by: Fred Brookes <fred@example.com>
 }
 
 #[test]
-fn adds_newline_and_coauthors_to_a_comment_only_message() {
+fn adds_newline_and_preformatted_trailers_to_a_comment_only_message() {
     assert_eq!(
         prepare_commit_message(
-            &Org::from([(
-                "cool gang".to_owned(),
-                team(&CurrentMobInitials::from([
-                    "ab".to_owned(),
-                    "fb".to_owned()
-                ])),
-            )]),
             &MobData {
-                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
-                message: "".to_owned(),
+                current_mob_initials: CurrentMobInitials::default(),
+                message: "some\nlines\n".to_owned(),
             },
             r#"# some comments
 # go here
@@ -122,8 +91,8 @@ fn adds_newline_and_coauthors_to_a_comment_only_message() {
         ),
         Output {
             message: r#"
-Co-authored-by: Andrew Bruce <me@andrewbruce.net>
-Co-authored-by: Fred Brookes <fred@example.com>
+some
+lines
 
 # some comments
 # go here
@@ -145,16 +114,9 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
     .to_owned();
     assert_eq!(
         prepare_commit_message(
-            &Org::from([(
-                "cool gang".to_owned(),
-                team(&CurrentMobInitials::from([
-                    "ab".to_owned(),
-                    "fb".to_owned()
-                ])),
-            )]),
             &MobData {
-                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
-                message: "".to_owned(),
+                current_mob_initials: CurrentMobInitials::default(),
+                message: "shouldn't\nsee\nme\n".to_owned(),
             },
             message.clone(),
             Some("main")
@@ -169,16 +131,9 @@ fn does_not_change_commits_during_a_rebase() {
 
     assert_eq!(
         prepare_commit_message(
-            &Org::from([(
-                "cool gang".to_owned(),
-                team(&CurrentMobInitials::from([
-                    "ab".to_owned(),
-                    "fb".to_owned()
-                ]))
-            )]),
             &MobData {
-                current_mob_initials: CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
-                message: "".to_owned(),
+                current_mob_initials: CurrentMobInitials::default(),
+                message: "shouldn't\nsee\nme".to_owned(),
             },
             message.clone(),
             None
