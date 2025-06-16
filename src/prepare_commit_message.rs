@@ -15,11 +15,7 @@ pub fn parse_args() -> Args {
     Args::parse()
 }
 
-pub fn prepare_commit_message(
-    mob: &MobData,
-    message: String,
-    branch_name: Option<&str>,
-) -> Output {
+pub fn prepare_commit_message(mob: &MobData, message: String, branch_name: Option<&str>) -> Output {
     Output {
         message: convert_message(&mob.message, message, branch_name),
     }
@@ -30,7 +26,11 @@ fn convert_message(
     message: String,
     branch_name: Option<&str>,
 ) -> String {
-    if branch_name.is_none() || configured_trailers.is_empty() || has_coauthors(&message) {
+    if branch_name.is_none()
+        || configured_trailers.is_empty()
+        || has_coauthors(&message)
+        || message.contains(configured_trailers)
+    {
         message
     } else if is_only_comments(&message) {
         format!("\n{}\n{}", configured_trailers, message)

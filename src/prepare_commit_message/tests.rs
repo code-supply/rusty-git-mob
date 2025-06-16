@@ -126,6 +126,28 @@ cO-aUthoRed-by: Original Author <og@authors.biz>
 }
 
 #[test]
+fn does_not_include_additional_message_if_already_present_in_commit() {
+    let message = r#"I'm a commit that's bound to be amended
+
+story-1234
+
+Some more text
+"#
+    .to_owned();
+    assert_eq!(
+        prepare_commit_message(
+            &MobData {
+                current_mob_initials: CurrentMobInitials::default(),
+                message: "story-1234".to_owned(),
+            },
+            message.clone(),
+            Some("main")
+        ),
+        Output { message }
+    )
+}
+
+#[test]
 fn does_not_change_commits_during_a_rebase() {
     let message = "I'm a commit without trailers".to_owned();
 
