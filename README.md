@@ -72,6 +72,11 @@ Pair up with the person with the 'ab' initials.
 
 Pick your team from a TUI list.
 
+`git mob --message story-1234 ab`
+
+Pair up with the person with the 'ab' initials and add "story-1234" near the
+bottom of future commit messages.
+
 `git solo`
 
 Wipe the mob - you're working on your own for future commits.

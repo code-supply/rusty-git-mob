@@ -5,6 +5,7 @@ use cursive::{event::Key, views::ListView};
 
 use crate::config;
 use crate::config::CurrentMobInitials;
+use crate::config::MobData;
 use crate::config::Org;
 use crate::config::Team;
 use crate::git_mob::output;
@@ -12,19 +13,23 @@ use crate::git_mob::Output;
 use crate::output::trailers;
 use crate::output::MainResult;
 
-pub fn run<F>(org: Org, mob: &CurrentMobInitials, write: F)
+pub fn run<F>(org: Org, mob: &MobData, write: F)
 where
     F: Fn(Output) -> MainResult + 'static,
 {
     let coauthors = config::whole_org_as_team(&org);
     let mut siv = cursive::default();
 
-    siv.set_user_data(mob.to_owned());
+    siv.set_user_data(mob.to_owned().current_mob_initials.to_owned());
 
     siv.add_layer(
-        OnEventView::new(dialog(scroll_view(&coauthors, mob), coauthors, write))
-            .on_event('q', |s| s.quit())
-            .on_event(Key::Esc, |s| s.quit()),
+        OnEventView::new(dialog(
+            scroll_view(&coauthors, &mob.current_mob_initials),
+            coauthors,
+            write,
+        ))
+        .on_event('q', |s| s.quit())
+        .on_event(Key::Esc, |s| s.quit()),
     );
 
     siv.run()
@@ -39,7 +44,7 @@ where
         .button("OK", move |s| {
             s.with_user_data(|mob: &mut CurrentMobInitials| {
                 let ts = trailers(&coauthors, mob);
-                write(output(&ts, mob))
+                write(output(&None, &ts, mob))
             });
             s.quit()
         })
