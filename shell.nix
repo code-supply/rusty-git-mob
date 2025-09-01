@@ -1,5 +1,6 @@
-{ lib
-, pkgs
+{
+  lib,
+  pkgs,
 }:
 
 with lib.lists;
@@ -21,6 +22,6 @@ mkShell {
     rust-analyzer
     rustc
     rustfmt
-  ] ++ (optional stdenv.isDarwin darwin.apple_sdk.frameworks.Security)
-  ++ (optional stdenv.isDarwin libiconv);
+    zlib.dev
+  ] ++ (optional stdenv.isDarwin libiconv);
 }

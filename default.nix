@@ -1,5 +1,6 @@
-{ lib
-, pkgs
+{
+  lib,
+  pkgs,
 }:
 
 with lib.lists;
@@ -13,6 +14,9 @@ rustPlatform.buildRustPackage {
   };
 
   nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ ncurses openssl ] ++
-    optional stdenv.isDarwin darwin.apple_sdk.frameworks.Security;
+  buildInputs = [
+    ncurses
+    openssl
+    zlib.dev
+  ];
 }
