@@ -7,7 +7,7 @@ fn empty_input_returns_empty_output() {
     assert_eq!(
         process(
             &team(&config::CurrentMobInitials::new()),
-            &config::CurrentMobInitials::new(),
+            &config::MobData::default(),
             &Args {
                 initials: vec![],
                 ..Default::default()
@@ -22,7 +22,7 @@ fn forming_a_mob_outputs_the_mob_and_template() {
     assert_eq!(
         process(
             &team(&config::CurrentMobInitials::from(["ab".to_owned()])),
-            &config::CurrentMobInitials::new(),
+            &config::MobData::default(),
             &Args {
                 initials: vec!["ab".to_owned()],
                 ..Default::default()
@@ -31,7 +31,35 @@ fn forming_a_mob_outputs_the_mob_and_template() {
         Output {
             message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
             template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
-            mob: config::CurrentMobInitials::from(["ab".to_owned()]),
+            mob: config::MobData {
+                current_mob_initials: config::CurrentMobInitials::from(["ab".to_owned()]),
+                message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>".to_owned(),
+            }
+        }
+    );
+}
+
+#[test]
+fn passing_a_message_prepends_it_to_the_mob_output() {
+    assert_eq!(
+        process(
+            &team(&config::CurrentMobInitials::from(["ab".to_owned()])),
+            &config::MobData::default(),
+            &Args {
+                message: Some("STORY-1234".to_owned()),
+                initials: vec!["ab".to_owned()],
+                ..Default::default()
+            }
+        ),
+        Output {
+            message: "STORY-1234\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>\n".to_owned(),
+            template: "\n\nSTORY-1234\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>\n"
+                .to_owned(),
+            mob: config::MobData {
+                current_mob_initials: config::CurrentMobInitials::from(["ab".to_owned()]),
+                message: "STORY-1234\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>"
+                    .to_owned(),
+            }
         }
     );
 }
@@ -44,7 +72,7 @@ fn can_add_many_mobsters() {
                 "ab".to_owned(),
                 "fb".to_owned()
             ])),
-            &config::CurrentMobInitials::new(),
+            &config::MobData::default(),
             &Args {
                 initials: vec!["ab".to_owned(), "fb".to_owned()],
                 ..Default::default()
@@ -57,7 +85,15 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
             template: "\n\nCo-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                 .to_owned(),
-            mob: config::CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+            mob: config::MobData {
+                current_mob_initials: config::CurrentMobInitials::from([
+                    "ab".to_owned(),
+                    "fb".to_owned()
+                ]),
+                message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+Co-authored-by: Fred Brookes <fred@example.com>"
+                    .to_owned(),
+            }
         }
     );
 }
@@ -70,7 +106,13 @@ fn calling_without_initials_outputs_current_mob() {
                 "ab".to_owned(),
                 "fb".to_owned()
             ])),
-            &config::CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+            &config::MobData {
+                current_mob_initials: config::CurrentMobInitials::from([
+                    "ab".to_owned(),
+                    "fb".to_owned()
+                ]),
+                message: "".to_owned(),
+            },
             &Args {
                 initials: vec![],
                 ..Default::default()
@@ -85,7 +127,15 @@ Co-authored-by: Fred Brookes <fred@example.com>\n"
 Co-authored-by: Andrew Bruce <me@andrewbruce.net>
 Co-authored-by: Fred Brookes <fred@example.com>\n"
                 .to_owned(),
-            mob: config::CurrentMobInitials::from(["ab".to_owned(), "fb".to_owned()]),
+            mob: config::MobData {
+                current_mob_initials: config::CurrentMobInitials::from([
+                    "ab".to_owned(),
+                    "fb".to_owned()
+                ]),
+                message: "Co-authored-by: Andrew Bruce <me@andrewbruce.net>
+Co-authored-by: Fred Brookes <fred@example.com>"
+                    .to_owned(),
+            }
         }
     )
 }

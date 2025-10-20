@@ -63,10 +63,7 @@ fn git_mob_file_gets_initialised_when_non_existent() {
         "tmp/mob-file-init",
         json,
         |git_mob_env| {
-            assert_eq!(
-                config::CurrentMobInitials::default(),
-                git_mob_env.unwrap().mob
-            );
+            assert_eq!(config::MobData::default(), git_mob_env.unwrap().mob);
         },
     );
 }

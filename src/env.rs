@@ -11,7 +11,7 @@ use crate::io::open_read_write;
 #[derive(Debug)]
 pub struct Env {
     pub mob_file: File,
-    pub mob: config::CurrentMobInitials,
+    pub mob: config::MobData,
     pub template_file: File,
     pub org: config::Org,
 }
@@ -80,10 +80,11 @@ pub fn process(
     let coauthors_config: CoauthorsConfig =
         serde_json::from_reader(BufReader::new(coauthors_file))?;
 
-    let mob: serde_json::Result<Vec<String>> = serde_json::from_reader(BufReader::new(&mob_file));
+    let mob: serde_json::Result<config::MobData> =
+        serde_json::from_reader(BufReader::new(&mob_file));
     let mob_currently_set = match mob {
-        Ok(mob) => config::CurrentMobInitials::from_iter(mob.iter().cloned()),
-        Err(_) => config::CurrentMobInitials::default(),
+        Ok(mob) => mob,
+        Err(_) => config::MobData::default(),
     };
 
     Ok(Env {
