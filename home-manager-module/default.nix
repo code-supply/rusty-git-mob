@@ -1,12 +1,17 @@
 { packages }:
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
 let
   cfg = config.programs.rusty-git-mob;
-  gitMob = packages.${pkgs.system}.default;
+  gitMob = packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   options.programs.rusty-git-mob = {
@@ -16,6 +21,6 @@ in
   config = mkIf cfg.enable {
     home.packages = [ gitMob ];
     programs.git.hooks.prepare-commit-msg = "${gitMob}/bin/git-mob-prepare-commit-msg";
-    programs.git.extraConfig.commit.template = "~/.gitmessage.txt";
+    programs.git.settings.commit.template = "~/.gitmessage.txt";
   };
 }
