@@ -15,8 +15,7 @@ rustPlatform.buildRustPackage {
 
   nativeBuildInputs = [ pkg-config ];
   buildInputs = [
+    libgit2
     ncurses
-    openssl
-    zlib.dev
   ];
 }
