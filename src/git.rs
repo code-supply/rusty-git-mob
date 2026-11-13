@@ -63,7 +63,7 @@ pub fn head(dir: &str) -> Option<String> {
 fn head_shorthand(repo: Repository) -> Option<String> {
     repo.head()
         .ok()
-        .and_then(|h| h.shorthand().map(str::to_owned))
+        .and_then(|h| h.shorthand().ok().map(str::to_owned))
 }
 
 #[cfg(test)]
